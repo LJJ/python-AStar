@@ -4,8 +4,6 @@ from Tkinter import *
 import random
 
 
-#dslfjlksdjflasjdflsdjflasjdlfk
-
 width = 160
 height = 100
 unit = 8
