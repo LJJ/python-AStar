@@ -160,11 +160,17 @@ while len(allHighways)<4:
         highway.append(Location(x,y-20))
     expandHighway(highway)
 
-
+for i in range(0,int(0.2*width*height)):
+    x = random.randrange(0,width)
+    y = random.randrange(0,height)
+    if random.randrange(0,2) == 0:
+        if mapData[y][x] is not "0" and mapData[y][x] is not "2" and mapData[y][x] is not "a" and mapData[y][x] is not "b":
+            mapData[y][x] = "0"
+            w.create_rectangle(unit*x+border,unit*y+border,unit*(x+1)+border,unit*(y+1)+border, fill="black")
 
 # w.create_line(0, 0, 200, 200)
 # w.create_line(0, 100, 200, 0, fill="red", dash=(4, 4))
-#
+
 # w.create_rectangle(50, 25, 150, 75, fill="blue")
 
 mainloop()
