@@ -89,15 +89,15 @@ def isValidTarget(curLoc, tgLoc):
 def addHighwayCell(loc):
     status = mapData[loc.y][loc.x]
     if status is "1":
-        mapData[loc.y][loc.x] = "a%d" % (len(allHighways))
+        mapData[loc.y][loc.x] = "a%d" % (len(allHighways)+1)
     elif status is "2":
-        mapData[loc.y][loc.x] = "b%d" % (len(allHighways))
+        mapData[loc.y][loc.x] = "b%d" % (len(allHighways)+1)
 
 def removeHighwayCell(loc):
     status = mapData[loc.y][loc.x]
-    if "a" in status:
+    if "a%d" % (len(allHighways)+1) in status:
         mapData[loc.y][loc.x] = "1"
-    elif "b" in status:
+    elif "b%d" % (len(allHighways)+1) in status:
         mapData[loc.y][loc.x] = "2"
 
 def expandHighway(highway):
@@ -199,7 +199,7 @@ def createMap():
             if mapData[y][x] is not "0" and mapData[y][x] is not "2" and "a" not in mapData[y][x] and "b" not in mapData[y][x]:
                 mapData[y][x] = "0"
                 w.create_rectangle(unit*x+border,unit*y+border,unit*(x+1)+border,unit*(y+1)+border, fill="black")
-
+    saveMap()
     mainloop()
 
 
