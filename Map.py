@@ -12,7 +12,18 @@ highwayLength = 20
 allHighways = []
 
 master = Tk()
-w = Canvas(master, width=width*unit+border*2, height=height*unit+border*2)
+frame = Frame(master,width=1200,height=700)
+frame.grid(row=0,column=0)
+w = Canvas(frame,width=1200,height=700, scrollregion=(0,0,width*unit+border*2,height*unit+border*2))
+# w = Canvas(master, width=width*unit+border*2, height=height*unit+border*2)
+hbar=Scrollbar(frame,orient=HORIZONTAL)
+hbar.pack(side=BOTTOM,fill=X)
+hbar.config(command=w.xview)
+vbar=Scrollbar(frame,orient=VERTICAL)
+vbar.pack(side=RIGHT,fill=Y)
+w.config(width=1200,height=700)
+w.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
+vbar.config(command=w.yview)
 w.pack()
 
 class Location:
