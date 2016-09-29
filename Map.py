@@ -3,13 +3,17 @@ __author__ = 'lujiji'
 from Tkinter import *
 import random
 
-
 width = 160
 height = 120
+mapData = [["1" for i in range(width)] for j in range(height)]
 unit = 8
 border = 5
 highwayLength = 20
 allHighways = []
+
+master = Tk()
+w = Canvas(master, width=width*unit+border*2, height=height*unit+border*2)
+w.pack()
 
 class Location:
     x = 0
@@ -145,71 +149,73 @@ def drawHighway(highway):
         nextLoc = highway[i+1]
         w.create_line(curLoc.realX(),curLoc.realY(),nextLoc.realX(),nextLoc.realY(), fill="blue")
 
+def createMap():
+    for i in range(0, width+1):
+        w.create_line(unit*i+border, border, unit*i+border, height*unit+border, fill="gray")
 
-mapData = [["1" for i in range(width)] for j in range(height)]
+    for i in range(0, height+1):
+        w.create_line(border, unit*i+border, width*unit+border, unit*i+border, fill="gray")
 
-master = Tk()
-w = Canvas(master, width=width*unit+border*2, height=height*unit+border*2)
-w.pack()
+    for i in range(0, 8):
+        x = random.randrange(15, width-15)
+        y = random.randrange(15, height-15)
+        for j in range(x-15,x+15):
+            for k in range(y-15,y+15):
+                if random.randrange(0,2) == 0:
+                    if mapData[k][j] is not "2":
+                        mapData[k][j] = "2"
+                        w.create_rectangle(unit*j+border,unit*k+border,unit*(j+1)+border,unit*(k+1)+border, fill="gray")
 
-for i in range(0, width+1):
-    w.create_line(unit*i+border, border, unit*i+border, height*unit+border, fill="gray")
+    while len(allHighways)<4:
+        highway = []
+        x = random.randrange(0, width)
+        y = random.randrange(0, height)
+        if "a" in mapData[y][x] or "b" in mapData[y][x]:
+            continue;
+        dir = random.randrange(0,4)
+        if dir == 0:
+            x = 0
+            highway.append(Location(x,y))
+            highway.append(Location(x+20,y))
+        elif dir == 1:
+            y = 0
+            highway.append(Location(x,y))
+            highway.append(Location(x,y+20))
+        elif dir == 2:
+            x = width-1
+            highway.append(Location(x,y))
+            highway.append(Location(x-20,y))
+        else:
+            y = height-1
+            highway.append(Location(x,y))
+            highway.append(Location(x,y-20))
+        expandHighway(highway)
 
-for i in range(0, height+1):
-    w.create_line(border, unit*i+border, width*unit+border, unit*i+border, fill="gray")
+    # Add blocked cells
+    for i in range(0,int(0.2*width*height)):
+        x = random.randrange(0,width)
+        y = random.randrange(0,height)
+        if random.randrange(0,2) == 0:
+            if mapData[y][x] is not "0" and mapData[y][x] is not "2" and "a" not in mapData[y][x] and "b" not in mapData[y][x]:
+                mapData[y][x] = "0"
+                w.create_rectangle(unit*x+border,unit*y+border,unit*(x+1)+border,unit*(y+1)+border, fill="black")
 
-for i in range(0, 8):
-    x = random.randrange(15, width-15)
-    y = random.randrange(15, height-15)
-    for j in range(x-15,x+15):
-        for k in range(y-15,y+15):
-            if random.randrange(0,2) == 0:
-                if mapData[k][j] is not "2":
-                    mapData[k][j] = "2"
-                    w.create_rectangle(unit*j+border,unit*k+border,unit*(j+1)+border,unit*(k+1)+border, fill="gray")
-
-while len(allHighways)<4:
-    highway = []
-    x = random.randrange(0, width)
-    y = random.randrange(0, height)
-    if "a" in mapData[y][x] or "b" in mapData[y][x]:
-        continue;
-    dir = random.randrange(0,4)
-    if dir == 0:
-        x = 0
-        highway.append(Location(x,y))
-        highway.append(Location(x+20,y))
-    elif dir == 1:
-        y = 0
-        highway.append(Location(x,y))
-        highway.append(Location(x,y+20))
-    elif dir == 2:
-        x = width-1
-        highway.append(Location(x,y))
-        highway.append(Location(x-20,y))
-    else:
-        y = height-1
-        highway.append(Location(x,y))
-        highway.append(Location(x,y-20))
-    expandHighway(highway)
-
-# Add blocked cells
-for i in range(0,int(0.2*width*height)):
-    x = random.randrange(0,width)
-    y = random.randrange(0,height)
-    if random.randrange(0,2) == 0:
-        if mapData[y][x] is not "0" and mapData[y][x] is not "2" and "a" not in mapData[y][x] and "b" not in mapData[y][x]:
-            mapData[y][x] = "0"
-            w.create_rectangle(unit*x+border,unit*y+border,unit*(x+1)+border,unit*(y+1)+border, fill="black")
+    mainloop()
 
 
-f = open("./test.txt","w")
-for i in range(0,len(mapData)):
-    line = ""
-    for j in range(0,len(mapData[i])):
-        line += "%s," % (mapData[i][j])
-    f.write(line[:-2]+"\n")
-f.close()
+def saveMap():
+    f = open("./test.txt","w")
+    for i in range(0,len(mapData)):
+        line = ""
+        for j in range(0,len(mapData[i])):
+            line += "%s," % (mapData[i][j])
+        f.write(line[:-2]+"\n")
+    f.close()
 
-
-mainloop()
+def readMap():
+    content = open("./test.txt").read()
+    # content = f.readall()
+    lines = content.split("\n")
+    mapData = []
+    for i in range(0, len(lines)):
+        mapData.append(lines[i].split(","))
