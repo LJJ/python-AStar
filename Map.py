@@ -107,12 +107,11 @@ def drawHighway(highway):
         for l in range(0, len(locaitons)):
             loc = locaitons[l]
             status = mapData[loc.y][loc.x]
-            if status is "0":
+            if status is "1":
                 mapData[loc.y][loc.x] = "a"
             elif status is "2":
                 mapData[loc.y][loc.x] = "b"
         w.create_line(curLoc.realX(),curLoc.realY(),nextLoc.realX(),nextLoc.realY(), fill="blue")
-
 
 
 mapData = [["1" for i in range(width)] for j in range(height)]
@@ -159,7 +158,6 @@ while len(allHighways)<4:
         highway.append(Location(x,y))
         highway.append(Location(x,y-20))
     expandHighway(highway)
-
 
 # Add blocked cells
 for i in range(0,int(0.2*width*height)):
