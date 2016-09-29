@@ -160,6 +160,8 @@ while len(allHighways)<4:
         highway.append(Location(x,y-20))
     expandHighway(highway)
 
+
+# Add blocked cells
 for i in range(0,int(0.2*width*height)):
     x = random.randrange(0,width)
     y = random.randrange(0,height)
