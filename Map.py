@@ -5,7 +5,7 @@ import random
 
 
 width = 160
-height = 100
+height = 120
 unit = 8
 border = 5
 highwayLength = 20
@@ -14,6 +14,7 @@ allHighways = []
 class Location:
     x = 0
     y = 0
+    onBoundary = False
 
     def __init__(self, x, y):
         self.x = x
@@ -35,7 +36,14 @@ class Location:
         else:
             return (self.y+0.5)*unit+border
 
-    def isExceeded(self):
+    def equal(self, loc):
+        if self.x == loc.x and self.y == loc.y:
+            return True
+        else :
+            return False
+
+
+    def checkExceeded(self):
         if self.x >= width-1:
             self.x = width-1
         elif self.y >= height-1:
@@ -46,6 +54,7 @@ class Location:
             self.y = 0
         else:
             return False
+        self.onBoundary = True
         return True
 
     def getAllLocations(self, location):
@@ -64,17 +73,46 @@ class Location:
 
 def isValidTarget(curLoc, tgLoc):
     locaitons = curLoc.getAllLocations(tgLoc)
-    for l in range(1, len(locaitons)):
+    for l in range(0, len(locaitons)):
         loc = locaitons[l]
-        print(loc.x,loc.y,mapData[loc.y][loc.x])
-        if mapData[loc.y][loc.x] is "a" or mapData[loc.y][loc.x] is "b":
+        if loc.equal(curLoc) is True:
+            continue
+        if "a" in mapData[loc.y][loc.x] or "b" in mapData[loc.y][loc.x]:
+            print(loc.x,loc.y,mapData[loc.y][loc.x])
             return False
     return True
 
+def addHighwayCell(loc):
+    status = mapData[loc.y][loc.x]
+    if status is "1":
+        mapData[loc.y][loc.x] = "a%d" % (len(allHighways))
+    elif status is "2":
+        mapData[loc.y][loc.x] = "b%d" % (len(allHighways))
+
+def removeHighwayCell(loc):
+    status = mapData[loc.y][loc.x]
+    if "a" in status:
+        mapData[loc.y][loc.x] = "1"
+    elif "b" in status:
+        mapData[loc.y][loc.x] = "2"
 
 def expandHighway(highway):
     curLoc = highway[-1]
     preLoc = highway[-2]
+    locaitons = preLoc.getAllLocations(curLoc)
+    if isValidTarget(preLoc, curLoc) is False:
+        shrinkHighway(highway)
+        return
+    for l in range(0, len(locaitons)):
+        addHighwayCell(locaitons[l])
+    if curLoc.onBoundary is True:
+        if len(highway) < 7:
+            shrinkHighway(highway)
+            return
+        else:
+            drawHighway(highway)
+            return
+
     i = random.randrange(0, 11)
     nextLoc = Location(0,0)
     if i < 6:
@@ -85,17 +123,19 @@ def expandHighway(highway):
             nextLoc = Location(curLoc.x+(-1)**power*highwayLength,curLoc.y)
         else:
             nextLoc = Location(curLoc.x,curLoc.y+(-1)**power*highwayLength)
-
-    isExceeded = nextLoc.isExceeded()
-    if isValidTarget(curLoc, nextLoc) is False:
-        return
+    nextLoc.checkExceeded()
     highway.append(nextLoc)
-    if isExceeded is True:
-        if len(highway) < 7:
-            return
-        drawHighway(highway)
-    else:
-        expandHighway(highway)
+    expandHighway(highway)
+
+
+def shrinkHighway(highway):
+    for i in range(0,len(highway)-1):
+        curLoc = highway[i]
+        nextLoc = highway[i+1]
+        locaitons = curLoc.getAllLocations(nextLoc)
+        for l in range(0, len(locaitons)):
+            removeHighwayCell(locaitons[l])
+
 
 
 def drawHighway(highway):
@@ -103,14 +143,6 @@ def drawHighway(highway):
     for i in range(0,len(highway)-1):
         curLoc = highway[i]
         nextLoc = highway[i+1]
-        locaitons = curLoc.getAllLocations(nextLoc)
-        for l in range(0, len(locaitons)):
-            loc = locaitons[l]
-            status = mapData[loc.y][loc.x]
-            if status is "1":
-                mapData[loc.y][loc.x] = "a"
-            elif status is "2":
-                mapData[loc.y][loc.x] = "b"
         w.create_line(curLoc.realX(),curLoc.realY(),nextLoc.realX(),nextLoc.realY(), fill="blue")
 
 
@@ -140,6 +172,8 @@ while len(allHighways)<4:
     highway = []
     x = random.randrange(0, width)
     y = random.randrange(0, height)
+    if "a" in mapData[y][x] or "b" in mapData[y][x]:
+        continue;
     dir = random.randrange(0,4)
     if dir == 0:
         x = 0
@@ -164,13 +198,18 @@ for i in range(0,int(0.2*width*height)):
     x = random.randrange(0,width)
     y = random.randrange(0,height)
     if random.randrange(0,2) == 0:
-        if mapData[y][x] is not "0" and mapData[y][x] is not "2" and mapData[y][x] is not "a" and mapData[y][x] is not "b":
+        if mapData[y][x] is not "0" and mapData[y][x] is not "2" and "a" not in mapData[y][x] and "b" not in mapData[y][x]:
             mapData[y][x] = "0"
             w.create_rectangle(unit*x+border,unit*y+border,unit*(x+1)+border,unit*(y+1)+border, fill="black")
 
-# w.create_line(0, 0, 200, 200)
-# w.create_line(0, 100, 200, 0, fill="red", dash=(4, 4))
 
-# w.create_rectangle(50, 25, 150, 75, fill="blue")
+f = open("./test.txt","w")
+for i in range(0,len(mapData)):
+    line = ""
+    for j in range(0,len(mapData[i])):
+        line += "%s," % (mapData[i][j])
+    f.write(line[:-2]+"\n")
+f.close()
+
 
 mainloop()
