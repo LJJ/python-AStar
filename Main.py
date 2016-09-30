@@ -5,11 +5,8 @@ from Astar import *
 
 import random
 
-
 createMap()
-
 readMap()
-
 start_x, start_y, goal_x, goal_y = CreateStartGoal()
 
 print mapData[start_y][start_x], start_x, start_y
@@ -19,9 +16,6 @@ sGoal = (goal_x, goal_y)
 
 
 path_id = Astar(sStart, sGoal, mapData)
-
-#print "no path found"
-
 print path_id
 
 DrawLines(path_id[len(path_id)-1], sStart)

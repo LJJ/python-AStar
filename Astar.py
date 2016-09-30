@@ -7,8 +7,59 @@ def Astar(sStart, sGoal, mapData):
         hValue =(sqrt(2)-1)*min(abs(current[0]- goal[0]), abs(current[1]- goal[1]))+ max(abs(current[0]- goal[0]), abs(current[1]- goal[1]))
         return hValue
 
+    print mapData
+
     def distance(s, s_prime):
-        dist =sqrt((s[0]- s_prime[0])**2+(s[1]- s_prime[1])**2)
+        distConst= sqrt((s[0]- s_prime[0])**2+(s[1]- s_prime[1])**2)
+        if mapData[s[1]][s[0]] == '1':
+            if mapData[s_prime[1]][s_prime[0]] == '1':
+                dist =distConst
+            elif mapData[s_prime[1]][s_prime[0]] == '2':
+                dist =1.5* distConst
+            elif 'a' in mapData[s_prime[1]][s_prime[0]]:
+                dist =distConst
+            elif 'b' in mapData[s_prime[1]][s_prime[0]]:
+                dist =1.5* distConst
+        elif mapData[s[1]][s[0]] == '2':
+            if mapData[s_prime[1]][s_prime[0]] == '1':
+                dist =1.5* distConst
+            elif mapData[s_prime[1]][s_prime[0]] == '2':
+                dist =2* distConst
+            elif 'a' in mapData[s_prime[1]][s_prime[0]]:
+                dist =1.5* distConst
+            elif 'b' in mapData[s_prime[1]][s_prime[0]]:
+                dist =2* distConst
+        elif 'a' in mapData[s[1]][s[0]]:
+            if mapData[s_prime[1]][s_prime[0]] == '1':
+                dist =distConst
+            elif mapData[s_prime[1]][s_prime[0]] == '2':
+                dist =1.5* distConst
+            elif 'a' in mapData[s_prime[1]][s_prime[0]]:
+                if distConst >1:
+                    dist= distConst
+                else:
+                    dist =0.25* distConst
+            elif 'b' in mapData[s_prime[1]][s_prime[0]]:
+                if distConst >1:
+                    dist= 1.5* distConst
+                else:
+                    dist =0.375* distConst
+        elif 'b' in mapData[s[1]][s[0]]:
+            if mapData[s_prime[1]][s_prime[0]] == '1':
+                dist =1.5* distConst
+            elif mapData[s_prime[1]][s_prime[0]] == '2':
+                dist =2* distConst
+            elif 'a' in mapData[s_prime[1]][s_prime[0]]:
+                if distConst > 1:
+                    dist= 1.5* distConst
+                else:
+                    dist =0.375* distConst
+            elif 'b' in mapData[s_prime[1]][s_prime[0]]:
+                if distConst >1:
+                    dist= 2* distConst
+                else:
+                    dist =0.5* distConst
+        #dist =sqrt((s[0]- s_prime[0])**2+(s[1]- s_prime[1])**2)
         return dist
 
     def findPath(path, current):

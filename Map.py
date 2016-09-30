@@ -21,8 +21,8 @@ hbar.pack(side=BOTTOM,fill=X)
 hbar.config(command=w.xview)
 vbar=Scrollbar(frame,orient=VERTICAL)
 vbar.pack(side=RIGHT,fill=Y)
-#w.config(width=1200,height=700)
-w.config(width=1290,height=970)
+w.config(width=1200,height=700)
+#w.config(width=1290,height=970)
 w.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
 vbar.config(command=w.yview)
 w.pack()
@@ -206,16 +206,14 @@ def createMap():
     # Add blocked cells
     num_blocked = 0
     while num_blocked < int(0.2*width*height):
-    #for i in range(0,int(0.2*width*height)):
         x = random.randrange(0, width)
         y = random.randrange(0, height)
         if mapData[y][x] not in ["0", "2"] and "a" not in mapData[y][x] and "b" not in mapData[y][x]:
             mapData[y][x] = "0"
             w.create_rectangle(unit*x+border, unit*y+border, unit*(x+1)+border, unit*(y+1)+border, fill="black")
             num_blocked += 1
-    #print num_blocked
     saveMap()
-    #mainloop()
+
 
 def CreateStartGoal():
     start_x = random.randrange(0, 20)
@@ -234,7 +232,7 @@ def CreateStartGoal():
     return start_x, start_y, goal_x, goal_y
 
 def DrawLines(locstart, locend):
-    w.create_line((locstart[0]+0.5)*unit+border, (locstart[1]+0.5)*unit+border, (locend[0]+0.5)*unit+border,(locend[1]+0.5)*unit+border, fill="red")
+    w.create_line((locstart[0]+0.5)*unit+border, (locstart[1]+0.5)*unit+border, (locend[0]+0.5)*unit+border,(locend[1]+0.5)*unit+border, fill="red", width= 3)
 
 
 def saveMap():
@@ -253,3 +251,5 @@ def readMap():
     mapData = []
     for i in range(0, len(lines)):
         mapData.append(lines[i].split(","))
+
+#mainloop()
