@@ -1,10 +1,37 @@
-__author__ = 'lujiji'
-import Map
+__author__ = 'lujiji and SiyuChen'
+#import Map
+from Map import *
+from Astar import *
+
+import random
+
+
+createMap()
+
+readMap()
+
+start_x, start_y, goal_x, goal_y = CreateStartGoal()
+
+print mapData[start_y][start_x], start_x, start_y
+print mapData[goal_y][goal_x], goal_x, goal_y
+sStart = (start_x, start_y)
+sGoal = (goal_x, goal_y)
+
+
+path_id = Astar(sStart, sGoal, mapData)
+
+#print "no path found"
+
+print path_id
+
+DrawLines(path_id[len(path_id)-1], sStart)
+for i in range(0, len(path_id)-1):
+    DrawLines(path_id[i], path_id[i+1])
+
+mainloop()
+
 
 x = 0
-
-Map.createMap()
-
 # while x != 6:
 #     display = ["Please input your choice:",
 #                "1. Create new map",

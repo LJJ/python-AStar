@@ -1,4 +1,4 @@
-__author__ = 'lujiji'
+__author__ = 'lujiji and SiyuChen'
 
 from Tkinter import *
 import random
@@ -21,7 +21,8 @@ hbar.pack(side=BOTTOM,fill=X)
 hbar.config(command=w.xview)
 vbar=Scrollbar(frame,orient=VERTICAL)
 vbar.pack(side=RIGHT,fill=Y)
-w.config(width=1200,height=700)
+#w.config(width=1200,height=700)
+w.config(width=1290,height=970)
 w.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
 vbar.config(command=w.yview)
 w.pack()
@@ -203,15 +204,37 @@ def createMap():
         expandHighway(highway)
 
     # Add blocked cells
-    for i in range(0,int(0.2*width*height)):
-        x = random.randrange(0,width)
-        y = random.randrange(0,height)
-        if random.randrange(0,2) == 0:
-            if mapData[y][x] is not "0" and mapData[y][x] is not "2" and "a" not in mapData[y][x] and "b" not in mapData[y][x]:
-                mapData[y][x] = "0"
-                w.create_rectangle(unit*x+border,unit*y+border,unit*(x+1)+border,unit*(y+1)+border, fill="black")
+    num_blocked = 0
+    while num_blocked < int(0.2*width*height):
+    #for i in range(0,int(0.2*width*height)):
+        x = random.randrange(0, width)
+        y = random.randrange(0, height)
+        if mapData[y][x] not in ["0", "2"] and "a" not in mapData[y][x] and "b" not in mapData[y][x]:
+            mapData[y][x] = "0"
+            w.create_rectangle(unit*x+border, unit*y+border, unit*(x+1)+border, unit*(y+1)+border, fill="black")
+            num_blocked += 1
+    #print num_blocked
     saveMap()
-    mainloop()
+    #mainloop()
+
+def CreateStartGoal():
+    start_x = random.randrange(0, 20)
+    start_y = random.randrange(0, 20)
+    while mapData[start_y][start_x] is "0":
+        start_x = random.randrange(0, 20)
+        start_y = random.randrange(0, 20)
+    w.create_oval(unit*start_x+border+1, unit*start_y+border+1, unit*(start_x+1)+border-1, unit*(start_y+1)+border-1, fill="red")
+
+    goal_x = random.randrange(width-20, width)
+    goal_y = random.randrange(height-20, height)
+    while mapData[goal_y][goal_x] is "0":
+        goal_x = random.randrange(width-20, width)
+        goal_y = random.randrange(height-20, height)
+    w.create_oval(unit*goal_x+border+1, unit*goal_y+border+1, unit*(goal_x+1)+border-1, unit*(goal_y+1)+border-1, fill="green")
+    return start_x, start_y, goal_x, goal_y
+
+def DrawLines(locstart, locend):
+    w.create_line((locstart[0]+0.5)*unit+border, (locstart[1]+0.5)*unit+border, (locend[0]+0.5)*unit+border,(locend[1]+0.5)*unit+border, fill="red")
 
 
 def saveMap():
