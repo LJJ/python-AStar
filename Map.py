@@ -231,7 +231,6 @@ def CreateStartGoal():
             goal_x, goal_y = GenerateStartGoal()
         while mapData[goal_y][goal_x] is "0":
             goal_x, goal_y = GenerateStartGoal()
-
     w.create_oval(unit*start_x+border+1, unit*start_y+border+1, unit*(start_x+1)+border-1, unit*(start_y+1)+border-1, fill="red")
     w.create_oval(unit*goal_x+border+1, unit*goal_y+border+1, unit*(goal_x+1)+border-1, unit*(goal_y+1)+border-1, fill="green")
     return start_x, start_y, goal_x, goal_y
@@ -248,12 +247,13 @@ def DrawLines(locstart, locend):
 
 
 def saveMap():
+    print '111',range(0,len(mapData[50]))
     f = open("./test.txt","w")
     for i in range(0,len(mapData)):
         line = ""
         for j in range(0,len(mapData[i])):
             line += "%s," % (mapData[i][j])
-        f.write(line[:-2]+"\n")
+        f.write(line[:-1]+"\n")
     f.close()
 
 def readMap():
