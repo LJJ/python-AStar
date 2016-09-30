@@ -2,7 +2,7 @@ __author__ = 'lujiji and SiyuChen'
 
 from Tkinter import *
 import random
-
+import math
 width = 160
 height = 120
 mapData = [["1" for i in range(width)] for j in range(height)]
@@ -21,7 +21,7 @@ hbar.pack(side=BOTTOM,fill=X)
 hbar.config(command=w.xview)
 vbar=Scrollbar(frame,orient=VERTICAL)
 vbar.pack(side=RIGHT,fill=Y)
-w.config(width=1200,height=700)
+w.config(width=1200,height=650)
 #w.config(width=1290,height=970)
 w.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
 vbar.config(command=w.yview)
@@ -216,20 +216,32 @@ def createMap():
 
 
 def CreateStartGoal():
-    start_x = random.randrange(0, 20)
-    start_y = random.randrange(0, 20)
+    start_x, start_y = GenerateStartGoal()
     while mapData[start_y][start_x] is "0":
-        start_x = random.randrange(0, 20)
-        start_y = random.randrange(0, 20)
-    w.create_oval(unit*start_x+border+1, unit*start_y+border+1, unit*(start_x+1)+border-1, unit*(start_y+1)+border-1, fill="red")
+        start_x, start_y = GenerateStartGoal()
 
-    goal_x = random.randrange(width-20, width)
-    goal_y = random.randrange(height-20, height)
+    goal_x, goal_y = GenerateStartGoal()
     while mapData[goal_y][goal_x] is "0":
-        goal_x = random.randrange(width-20, width)
-        goal_y = random.randrange(height-20, height)
+        goal_x, goal_y = GenerateStartGoal()
+
+    while math.sqrt((start_x - goal_x)**2+(start_y - goal_y)**2) < 100:
+        start_x, start_y = GenerateStartGoal()
+        while mapData[start_y][start_x] is "0":
+            start_x, start_y = GenerateStartGoal()
+            goal_x, goal_y = GenerateStartGoal()
+        while mapData[goal_y][goal_x] is "0":
+            goal_x, goal_y = GenerateStartGoal()
+
+    w.create_oval(unit*start_x+border+1, unit*start_y+border+1, unit*(start_x+1)+border-1, unit*(start_y+1)+border-1, fill="red")
     w.create_oval(unit*goal_x+border+1, unit*goal_y+border+1, unit*(goal_x+1)+border-1, unit*(goal_y+1)+border-1, fill="green")
     return start_x, start_y, goal_x, goal_y
+
+def GenerateStartGoal():
+    possibility= random.randrange(0, 2)
+    position_x = possibility*random.randrange(0, 20)+ (1-possibility)*random.randrange(width-20, width)
+    position_y = possibility*random.randrange(0, 20)+ (1-possibility)*random.randrange(height-20, height)
+    return position_x, position_y
+
 
 def DrawLines(locstart, locend):
     w.create_line((locstart[0]+0.5)*unit+border, (locstart[1]+0.5)*unit+border, (locend[0]+0.5)*unit+border,(locend[1]+0.5)*unit+border, fill="red", width= 3)

@@ -1,6 +1,7 @@
 __author__ = 'SiyuChen and lujiji'
 from math import *
 
+
 def Astar(sStart, sGoal, mapData):
     # A-star algorithm
     def hFunc(current, goal):
@@ -94,8 +95,11 @@ def Astar(sStart, sGoal, mapData):
         for i in range(-1,2):
             for j in range(-1,2):
                 if not(i == 0 and j == 0):
+                    if s[1]+j > 119 or s[0]+i > 159 or [s[1]+j] < 0 or [s[0]+i] < 0:
+                        continue
                     if mapData[s[1]+j][s[0]+i] is not "0":
                         s_prime = (s[0]+i, s[1]+j)
+                        #print s_prime
                         if s_prime not in closed:
                             temp_gValue = gValue[s] + distance(s, s_prime)
                             if s_prime not in fringe:
