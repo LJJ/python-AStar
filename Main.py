@@ -5,7 +5,7 @@ from Astar import *
 
 import random
 
-#createMap()
+createMap()
 readMap()
 start_x, start_y, goal_x, goal_y = CreateStartGoal()
 
