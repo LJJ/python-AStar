@@ -8,7 +8,7 @@ def Astar(sStart, sGoal, mapData):
         hValue =(sqrt(2)-1)*min(abs(current[0]- goal[0]), abs(current[1]- goal[1]))+ max(abs(current[0]- goal[0]), abs(current[1]- goal[1]))
         return hValue
 
-    print mapData
+    #print mapData
 
     def distance(s, s_prime):
         distConst= sqrt((s[0]- s_prime[0])**2+(s[1]- s_prime[1])**2)
@@ -87,6 +87,8 @@ def Astar(sStart, sGoal, mapData):
         s = min(fValue.items(), key=lambda x: x[1])[0]
         if s == sGoal:
             print "path found"
+            cost = fringe[s]
+            print cost
             loc1 = findPath(path, sGoal)
             break
         temp_dis = fringe.pop(s)
@@ -114,5 +116,5 @@ def Astar(sStart, sGoal, mapData):
                                 gValue[s_prime] = temp_gValue
                                 hValue[s_prime] = hFunc(s_prime, sGoal)
                                 fValue[s_prime] = gValue[s_prime] + hValue[s_prime]
-    return path_id
+    return path_id, cost
 

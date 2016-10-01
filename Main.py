@@ -8,22 +8,24 @@ import random
 
 readMap()
 # createMap()
-# start_x, start_y, goal_x, goal_y = CreateStartGoal()
-#
-# print mapData[start_y][start_x], start_x, start_y
-# print mapData[goal_y][goal_x], goal_x, goal_y
-# sStart = (start_x, start_y)
-# sGoal = (goal_x, goal_y)
-#
-#
-# path_id = Astar(sStart, sGoal, mapData)
-# print path_id
-#
-# DrawLines(path_id[len(path_id)-1], sStart)
-# for i in range(0, len(path_id)-1):
-#     DrawLines(path_id[i], path_id[i+1])
-#
-# mainloop()
+start_x, start_y, goal_x, goal_y = CreateStartGoal()
+
+print mapData[start_y][start_x], start_x, start_y
+print mapData[goal_y][goal_x], goal_x, goal_y
+sStart = (start_x, start_y)
+sGoal = (goal_x, goal_y)
+
+
+path_id, cost = Astar(sStart, sGoal, mapData)
+path_id.append(sStart)
+path_id.reverse()
+print path_id
+savePath(path_id, cost)
+
+for i in range(0, len(path_id)-1):
+    DrawLines(path_id[i], path_id[i+1])
+
+mainloop()
 
 
 x = 0

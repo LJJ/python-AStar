@@ -22,7 +22,7 @@ hbar.config(command=w.xview)
 vbar=Scrollbar(frame,orient=VERTICAL)
 vbar.pack(side=RIGHT,fill=Y)
 w.config(width=1200,height=650)
-#w.config(width=1290,height=970)
+# w.config(width=1290,height=970)
 w.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
 vbar.config(command=w.yview)
 w.pack()
@@ -215,6 +215,11 @@ def createMap():
             num_blocked += 1
     saveMap()
 
+def GenerateStartGoal():
+    possibility= random.randrange(0, 2)
+    position_x = possibility*random.randrange(0, 20)+ (1-possibility)*random.randrange(width-20, width)
+    position_y = possibility*random.randrange(0, 20)+ (1-possibility)*random.randrange(height-20, height)
+    return position_x, position_y
 
 def CreateStartGoal():
     start_x, start_y = GenerateStartGoal()
@@ -236,16 +241,18 @@ def CreateStartGoal():
     w.create_oval(unit*goal_x+border+1, unit*goal_y+border+1, unit*(goal_x+1)+border-1, unit*(goal_y+1)+border-1, fill="green")
     return start_x, start_y, goal_x, goal_y
 
-def GenerateStartGoal():
-    possibility= random.randrange(0, 2)
-    position_x = possibility*random.randrange(0, 20)+ (1-possibility)*random.randrange(width-20, width)
-    position_y = possibility*random.randrange(0, 20)+ (1-possibility)*random.randrange(height-20, height)
-    return position_x, position_y
-
-
 def DrawLines(locstart, locend):
     w.create_line((locstart[0]+0.5)*unit+border, (locstart[1]+0.5)*unit+border, (locend[0]+0.5)*unit+border,(locend[1]+0.5)*unit+border, fill="red", width= 3)
 
+def savePath(path_id, cost):
+    f = open("./path.txt","w")
+    f.write("%f" % (cost))
+    for i in range(0,len(path_id)):
+        line = ""
+        for j in range(0,len(path_id[i])):
+            line += "%s," % (path_id[i][j])
+        f.write("\n"+line[:-1])
+    f.close()
 
 def saveMap():
     f = open("./test.txt","w")
@@ -286,6 +293,5 @@ def readMap():
                 if y+1<len(mapData) and len(mapData[y+1][x]) == 2 and status[-1] == mapData[y+1][x][-1]:
                     nextLoc = Location(x,y+1)
                     w.create_line(curLoc.realX(),curLoc.realY(),nextLoc.realX(),nextLoc.realY(), fill="blue")
-
-    mainloop()
+    #mainloop()
 #mainloop()
