@@ -161,13 +161,14 @@ def drawHighway(highway):
         nextLoc = highway[i+1]
         w.create_line(curLoc.realX(),curLoc.realY(),nextLoc.realX(),nextLoc.realY(), fill="blue")
 
-def createMap():
+def createGrid():
     for i in range(0, width+1):
         w.create_line(unit*i+border, border, unit*i+border, height*unit+border, fill="gray")
-
     for i in range(0, height+1):
         w.create_line(border, unit*i+border, width*unit+border, unit*i+border, fill="gray")
 
+def createMap():
+    createGrid()
     for i in range(0, 8):
         x = random.randrange(15, width-15)
         y = random.randrange(15, height-15)
@@ -237,19 +238,37 @@ def DrawLines(locstart, locend):
 
 def saveMap():
     f = open("./test.txt","w")
+    print(len(mapData[0]))
     for i in range(0,len(mapData)):
         line = ""
         for j in range(0,len(mapData[i])):
             line += "%s," % (mapData[i][j])
-        f.write(line[:-2]+"\n")
+        if i == 0:
+            f.write(line[:-2])
+        else:
+            f.write("\n"+line[:-2])
     f.close()
 
 def readMap():
     content = open("./test.txt").read()
-    # content = f.readall()
     lines = content.split("\n")
     mapData = []
     for i in range(0, len(lines)):
         mapData.append(lines[i].split(","))
 
+    createGrid()
+    for y in range(0,len(mapData)):
+        for x in range(0,len(mapData[y])):
+            status = mapData[y][x]
+            if status is "0":
+                w.create_rectangle(x*unit+border,y*unit+border,(x+1)*unit+border,(y+1)*unit+border, fill="black")
+            elif status is "2" or "b" in status:
+                w.create_rectangle(x*unit+border,y*unit+border,(x+1)*unit+border,(y+1)*unit+border, fill="gray")
+
+            if "b" in status or "a" in status:
+                if x+1<len(mapData[y]) and len(mapData[y][x+1]) == 2 and status[-1] == mapData[y][x+1][-1]:
+                    w.create_line(x*unit+border,(y+0.5)*unit+border,(x+1)*unit+border,(y+0.5)*unit+border,fill="blue")
+                else:
+                    w.create_line((x+0.5)*unit+border,y*unit+border,(x+0.5)*unit+border,(y+1)*unit+border,fill="blue")
+    mainloop()
 #mainloop()
