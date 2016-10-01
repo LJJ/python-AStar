@@ -6,6 +6,7 @@ import math
 width = 160
 height = 120
 mapData = [["1" for i in range(width)] for j in range(height)]
+print(id(mapData))
 unit = 8
 border = 5
 highwayLength = 20
@@ -94,7 +95,6 @@ def isValidTarget(curLoc, tgLoc):
         if loc.equal(curLoc) is True:
             continue
         if "a" in mapData[loc.y][loc.x] or "b" in mapData[loc.y][loc.x]:
-            print(loc.x,loc.y,mapData[loc.y][loc.x])
             return False
     return True
 
@@ -261,8 +261,8 @@ def readMap():
     content = open("./test.txt").read()
     lines = content.split("\n")
     mapData = []
-    width = int(lines[0][:-1].split(",")[1])
-    height = int(lines[0][:-1].split(",")[0])
+    width = int(lines[0].split(",")[1])
+    height = int(lines[0].split(",")[0])
     for i in range(1, len(lines)):
         mapData.append(lines[i].split(","))
 
@@ -280,6 +280,7 @@ def readMap():
             if "b" in status or "a" in status:
                 curLoc = Location(x,y)
                 nextLoc = None
+                print(x,y)
                 if x+1<len(mapData[y]) and len(mapData[y][x+1]) == 2 and status[-1] == mapData[y][x+1][-1]:
                     nextLoc = Location(x+1,y)
                     w.create_line(curLoc.realX(),curLoc.realY(),nextLoc.realX(),nextLoc.realY(), fill="blue")

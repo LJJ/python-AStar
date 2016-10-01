@@ -8,6 +8,7 @@ import random
 
 readMap()
 # createMap()
+# print(mapData)
 # start_x, start_y, goal_x, goal_y = CreateStartGoal()
 #
 # print mapData[start_y][start_x], start_x, start_y
@@ -23,7 +24,7 @@ readMap()
 # for i in range(0, len(path_id)-1):
 #     DrawLines(path_id[i], path_id[i+1])
 #
-# mainloop()
+mainloop()
 
 
 x = 0
