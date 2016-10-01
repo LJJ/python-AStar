@@ -248,24 +248,22 @@ def DrawLines(locstart, locend):
 
 
 def saveMap():
-    print '111',range(0,len(mapData[50]))
     f = open("./test.txt","w")
-    print(len(mapData[0]))
+    f.write("%d,%d" % (height,width))
     for i in range(0,len(mapData)):
         line = ""
         for j in range(0,len(mapData[i])):
             line += "%s," % (mapData[i][j])
-        if i == 0:
-            f.write(line[:-1])
-        else:
-            f.write("\n"+line[:-1])
+        f.write("\n"+line[:-1])
     f.close()
 
 def readMap():
     content = open("./test.txt").read()
     lines = content.split("\n")
     mapData = []
-    for i in range(0, len(lines)):
+    width = int(lines[0][:-1].split(",")[1])
+    height = int(lines[0][:-1].split(",")[0])
+    for i in range(1, len(lines)):
         mapData.append(lines[i].split(","))
 
     createGrid()
@@ -276,11 +274,18 @@ def readMap():
                 w.create_rectangle(x*unit+border,y*unit+border,(x+1)*unit+border,(y+1)*unit+border, fill="black")
             elif status is "2" or "b" in status:
                 w.create_rectangle(x*unit+border,y*unit+border,(x+1)*unit+border,(y+1)*unit+border, fill="gray")
-
+    for y in range(0,len(mapData)):
+        for x in range(0,len(mapData[y])):
+            status = mapData[y][x]
             if "b" in status or "a" in status:
+                curLoc = Location(x,y)
+                nextLoc = None
                 if x+1<len(mapData[y]) and len(mapData[y][x+1]) == 2 and status[-1] == mapData[y][x+1][-1]:
-                    w.create_line(x*unit+border,(y+0.5)*unit+border,(x+1)*unit+border,(y+0.5)*unit+border,fill="blue")
-                else:
-                    w.create_line((x+0.5)*unit+border,y*unit+border,(x+0.5)*unit+border,(y+1)*unit+border,fill="blue")
+                    nextLoc = Location(x+1,y)
+                    w.create_line(curLoc.realX(),curLoc.realY(),nextLoc.realX(),nextLoc.realY(), fill="blue")
+                if y+1<len(mapData) and len(mapData[y+1][x]) == 2 and status[-1] == mapData[y+1][x][-1]:
+                    nextLoc = Location(x,y+1)
+                    w.create_line(curLoc.realX(),curLoc.realY(),nextLoc.realX(),nextLoc.realY(), fill="blue")
+
     mainloop()
 #mainloop()
