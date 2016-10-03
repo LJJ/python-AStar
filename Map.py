@@ -23,8 +23,8 @@ hbar.pack(side=BOTTOM,fill=X)
 hbar.config(command=w.xview)
 vbar=Scrollbar(frame,orient=VERTICAL)
 vbar.pack(side=RIGHT,fill=Y)
-# w.config(width=1200,height=650)
-w.config(width=1290,height=970)
+w.config(width=1200,height=650)
+# w.config(width=1290,height=970)
 w.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
 vbar.config(command=w.yview)
 w.pack()
@@ -223,21 +223,23 @@ def GenerateStartGoal():
     position_y = possibility*random.randrange(0, 20)+ (1-possibility)*random.randrange(height-20, height)
     return position_x, position_y
 
-def CreateStartGoal():
+def CreateStartGoal(mapData):
+
     start_x, start_y = GenerateStartGoal()
-    while mapData[start_y][start_x] is "0":
+    start_x = 3
+    start_y = 3
+    while mapData[start_y][start_x] == "0":
         start_x, start_y = GenerateStartGoal()
 
     goal_x, goal_y = GenerateStartGoal()
-    while mapData[goal_y][goal_x] is "0":
+    while mapData[goal_y][goal_x] == "0":
         goal_x, goal_y = GenerateStartGoal()
 
     while math.sqrt((start_x - goal_x)**2+(start_y - goal_y)**2) < 100:
         start_x, start_y = GenerateStartGoal()
-        while mapData[start_y][start_x] is "0":
+        while mapData[start_y][start_x] == "0":
             start_x, start_y = GenerateStartGoal()
-            goal_x, goal_y = GenerateStartGoal()
-        while mapData[goal_y][goal_x] is "0":
+        while mapData[goal_y][goal_x] == "0":
             goal_x, goal_y = GenerateStartGoal()
     w.create_oval(unit*start_x+border+1, unit*start_y+border+1, unit*(start_x+1)+border-1, unit*(start_y+1)+border-1, fill="red")
     w.create_oval(unit*goal_x+border+1, unit*goal_y+border+1, unit*(goal_x+1)+border-1, unit*(goal_y+1)+border-1, fill="green")
@@ -274,7 +276,7 @@ def readMap():
     height = int(lines[0].split(",")[0])
     for i in range(1, len(lines)):
         mapData.append(lines[i].split(","))
-        print(id(mapData))
+        # print(id(mapData))
 
     createGrid()
     for y in range(0,len(mapData)):
