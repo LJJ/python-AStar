@@ -25,7 +25,7 @@ savePath(path_id, cost)
 for i in range(0, len(path_id)-1):
     DrawLines(path_id[i], path_id[i+1])
 
-
+mainloop()
 
 x = 0
 # while x != 6:
