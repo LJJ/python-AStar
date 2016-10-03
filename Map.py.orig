@@ -30,8 +30,13 @@ hbar.pack(side=BOTTOM,fill=X)
 hbar.config(command=w.xview)
 vbar=Scrollbar(frame,orient=VERTICAL)
 vbar.pack(side=RIGHT,fill=Y)
+<<<<<<< HEAD
+# w.config(width=1200,height=650)
+w.config(width=1200,height=700)
+=======
 w.config(width=1200,height=650)
 # w.config(width=1290,height=970)
+>>>>>>> dbd42b962c8ee43ef043bed5a9bf0788055d0b74
 w.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
 vbar.config(command=w.yview)
 w.pack()

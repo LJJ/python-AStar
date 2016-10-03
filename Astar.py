@@ -11,6 +11,7 @@ def Astar(sStart, sGoal, mapData):
     #print mapData
 
     def distance(s, s_prime):
+        # print mapData[s[1]][s[0]], mapData[s_prime[1]][s_prime[0]]
         distConst= sqrt((s[0]- s_prime[0])**2+(s[1]- s_prime[1])**2)
         if mapData[s[1]][s[0]] == '1':
             if mapData[s_prime[1]][s_prime[0]] == '1':
@@ -97,7 +98,8 @@ def Astar(sStart, sGoal, mapData):
         for i in range(-1,2):
             for j in range(-1,2):
                 if not(i == 0 and j == 0):
-                    if s[1]+j > 119 or s[0]+i > 159 or [s[1]+j] < 0 or [s[0]+i] < 0:
+                    if s[1]+j > 119 or s[0]+i > 159 or s[1]+j < 0 or s[0]+i < 0:
+                        # print s[0], s[1], i, j
                         continue
                     if mapData[s[1]+j][s[0]+i] is not "0":
                         s_prime = (s[0]+i, s[1]+j)
