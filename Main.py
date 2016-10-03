@@ -9,6 +9,11 @@ start = time.clock()
 mapData = Map.readMap()
 # createMap()
 start_x, start_y, goal_x, goal_y = Map.CreateStartGoal(mapData)
+
+start_x = 0
+start_y = 0
+goal_x = 145
+goal_y = 116
 print mapData[start_y][start_x], start_x, start_y
 print mapData[goal_y][goal_x], goal_x, goal_y
 sStart = (start_x, start_y)

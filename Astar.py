@@ -5,10 +5,17 @@ from math import *
 def Astar(sStart, sGoal, mapData):
     # A-star algorithm
     def hFunc(current, goal):
-        hValue =(sqrt(2)-1)*min(abs(current[0]- goal[0]), abs(current[1]- goal[1]))+ max(abs(current[0]- goal[0]), abs(current[1]- goal[1]))
-        return hValue
+        distConst= sqrt((current[0]- goal[0])**2+(current[1]- goal[1])**2)
+        if distConst > 1:
+            hValue = (sqrt(2)-1)*min(abs(current[0] - goal[0]), abs(current[1] - goal[1]))+ max(abs(current[0] - goal[0]), abs(current[1] - goal[1]))
+        else:
+            hValue = 0.25 * (abs(current[0] - goal[0]) + abs(current[1] - goal[1]))
 
-    #print mapData
+        # hValue = 0.25 * (abs(current[0] - goal[0]) + abs(current[1] - goal[1]))
+        # hValue = 0.25 * ((sqrt(2)-1)*min(abs(current[0] - goal[0]), abs(current[1] - goal[1]))+ max(abs(current[0] - goal[0]), abs(current[1] - goal[1])))
+        # hValue = sqrt((current[0] - goal[0])**2 + (current[1] - goal[1])**2)
+        # hValue = abs(current[0] - goal[0]) + abs(current[1] - goal[1])
+        return hValue
 
     def distance(s, s_prime):
         # print mapData[s[1]][s[0]], mapData[s_prime[1]][s_prime[0]]
@@ -79,9 +86,10 @@ def Astar(sStart, sGoal, mapData):
     gValue = {}
     hValue = {}
     #fValue = {}
+    w = 1
     gValue[sStart] = 0
     hValue[sStart] = hFunc(sStart, sGoal)
-    fringe[sStart] = gValue[sStart] + hValue[sStart]
+    fringe[sStart] = gValue[sStart] + w * hValue[sStart]
     #fValue[sStart] = gValue[sStart] + hValue[sStart]
     path_id=[]
     while fringe != {}:
@@ -107,7 +115,7 @@ def Astar(sStart, sGoal, mapData):
                         if s_prime not in closed:
                             temp_gValue = gValue[s] + distance(s, s_prime)
                             if s_prime not in fringe:
-                                fringe[s_prime] = temp_gValue
+                                fringe[s_prime] = float('inf')
                                 status = True
                             elif temp_gValue < gValue[s_prime]:
                                 status = True
@@ -117,6 +125,6 @@ def Astar(sStart, sGoal, mapData):
                                 path[s_prime] = s
                                 gValue[s_prime] = temp_gValue
                                 hValue[s_prime] = hFunc(s_prime, sGoal)
-                                fringe[s_prime] = gValue[s_prime] + hValue[s_prime]
+                                fringe[s_prime] = gValue[s_prime] + w * hValue[s_prime]
     return path_id, cost
 
