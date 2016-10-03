@@ -1,8 +1,10 @@
 __author__ = 'lujiji and SiyuChen'
 import Map
 from Astar import *
-import random
 
+import time
+
+start = time.clock()
 
 mapData = Map.readMap()
 # createMap()
@@ -21,15 +23,12 @@ print path_id
 Map.savePath(path_id, cost)
 
 for i in range(0, len(path_id)-1):
-<<<<<<< HEAD
-    DrawLines(path_id[i], path_id[i+1])
-
-mainloop()
-=======
     Map.DrawLines(path_id[i], path_id[i+1])
-Map.mainloop()
 
->>>>>>> ccd128a290ce600641b50de30f69df392231c3b7
+end = time.clock()
+print 'Running time is:', end-start
+
+Map.mainloop()
 
 x = 0
 # while x != 6:
