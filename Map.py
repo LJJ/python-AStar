@@ -8,23 +8,30 @@ import math
 width = 160
 height = 120
 mapData = [["1" for i in range(width)] for j in range(height)]
-unit = 8
-border = 5
-highwayLength = 20
+unit = 15.0
+border = 5.0
+highwayLength = 20.0
 allHighways = []
+
+def callback(self):
+    loc = Location(math.floor((w.canvasx(self.x)-border)/unit),math.floor((w.canvasy(self.y)-border)/unit))
+    print loc.x,loc.y
+
 
 master = Tk()
 frame = Frame(master,width=1200,height=700)
+frame.pack()
 frame.grid(row=0,column=0)
 w = Canvas(frame,width=1200,height=700, scrollregion=(0,0,width*unit+border*2,height*unit+border*2))
 # w = Canvas(master, width=width*unit+border*2, height=height*unit+border*2)
+w.bind("<Button-1>", callback)
 hbar=Scrollbar(frame,orient=HORIZONTAL)
 hbar.pack(side=BOTTOM,fill=X)
 hbar.config(command=w.xview)
 vbar=Scrollbar(frame,orient=VERTICAL)
 vbar.pack(side=RIGHT,fill=Y)
 # w.config(width=1200,height=650)
-w.config(width=1290,height=970)
+w.config(width=1200,height=700)
 w.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
 vbar.config(command=w.yview)
 w.pack()
@@ -274,7 +281,7 @@ def readMap():
     height = int(lines[0].split(",")[0])
     for i in range(1, len(lines)):
         mapData.append(lines[i].split(","))
-        print(id(mapData))
+        # print(id(mapData))
 
     createGrid()
     for y in range(0,len(mapData)):
