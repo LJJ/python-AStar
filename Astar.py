@@ -77,14 +77,14 @@ def Astar(sStart, sGoal, mapData):
     path = {}
     gValue = {}
     hValue = {}
-    fValue = {}
+    #fValue = {}
     gValue[sStart] = 0
     hValue[sStart] = hFunc(sStart, sGoal)
-    fringe[sStart]=gValue
-    fValue[sStart] = gValue[sStart] + hValue[sStart]
+    fringe[sStart] = gValue[sStart] + hValue[sStart]
+    #fValue[sStart] = gValue[sStart] + hValue[sStart]
     path_id=[]
     while fringe != {}:
-        s = min(fValue.items(), key=lambda x: x[1])[0]
+        s = min(fringe.items(), key=lambda x: x[1])[0]
         if s == sGoal:
             print "path found"
             cost = fringe[s]
@@ -92,7 +92,7 @@ def Astar(sStart, sGoal, mapData):
             loc1 = findPath(path, sGoal)
             break
         temp_dis = fringe.pop(s)
-        temp_fValue = fValue.pop(s)
+        #temp_fValue = fValue.pop(s)
         closed[s] = temp_dis
         for i in range(-1,2):
             for j in range(-1,2):
@@ -115,6 +115,6 @@ def Astar(sStart, sGoal, mapData):
                                 path[s_prime] = s
                                 gValue[s_prime] = temp_gValue
                                 hValue[s_prime] = hFunc(s_prime, sGoal)
-                                fValue[s_prime] = gValue[s_prime] + hValue[s_prime]
+                                fringe[s_prime] = gValue[s_prime] + hValue[s_prime]
     return path_id, cost
 
