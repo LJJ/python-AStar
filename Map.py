@@ -3,10 +3,11 @@ __author__ = 'lujiji and SiyuChen'
 from Tkinter import *
 import random
 import math
+
+
 width = 160
 height = 120
 mapData = [["1" for i in range(width)] for j in range(height)]
-print(id(mapData))
 unit = 8
 border = 5
 highwayLength = 20
@@ -214,6 +215,7 @@ def createMap():
             w.create_rectangle(unit*x+border, unit*y+border, unit*(x+1)+border, unit*(y+1)+border, fill="black")
             num_blocked += 1
     saveMap()
+    return mapData
 
 def GenerateStartGoal():
     possibility= random.randrange(0, 2)
@@ -272,6 +274,7 @@ def readMap():
     height = int(lines[0].split(",")[0])
     for i in range(1, len(lines)):
         mapData.append(lines[i].split(","))
+        print(id(mapData))
 
     createGrid()
     for y in range(0,len(mapData)):
@@ -287,12 +290,10 @@ def readMap():
             if "b" in status or "a" in status:
                 curLoc = Location(x,y)
                 nextLoc = None
-                print(x,y)
                 if x+1<len(mapData[y]) and len(mapData[y][x+1]) == 2 and status[-1] == mapData[y][x+1][-1]:
                     nextLoc = Location(x+1,y)
                     w.create_line(curLoc.realX(),curLoc.realY(),nextLoc.realX(),nextLoc.realY(), fill="blue")
                 if y+1<len(mapData) and len(mapData[y+1][x]) == 2 and status[-1] == mapData[y+1][x][-1]:
                     nextLoc = Location(x,y+1)
                     w.create_line(curLoc.realX(),curLoc.realY(),nextLoc.realX(),nextLoc.realY(), fill="blue")
-    #mainloop()
-#mainloop()
+    return mapData
