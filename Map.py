@@ -43,13 +43,20 @@ class Location:
     gValue = 0.0
     hValue = 0.0
     parent = None
+    fValue = 0.0
 
     def __init__(self, x, y):
         self.x = x
         self.y = y
 
-    def fValue(self):
-        return self.gValue + self.hValue
+    def __str__(self):
+        return "%s,%s,%s,%s,%s" % (self.x,self.y, self.gValue, self.hValue, self.fValue)
+
+    # def fValue(self):
+    #     return self.gValue + self.hValue
+
+    def key(self):
+        return "%d%d" % (self.x,self.y)
 
     def realX(self):
         if self.x == 0:
@@ -73,6 +80,11 @@ class Location:
         else :
             return False
 
+    # def __contains__(self, other):
+    #     if self == other:
+    #         return True
+    #     else:
+    #         return False
 
     def checkExceeded(self):
         if self.x >= width-1:

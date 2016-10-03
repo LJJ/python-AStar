@@ -2,6 +2,7 @@ __author__ = 'SiyuChen and lujiji'
 from math import *
 import Map
 import BinaryHeap
+import time
 
 def Astar(sStart, sGoal, mapData):
     # A-star algorithm
@@ -73,10 +74,12 @@ def Astar(sStart, sGoal, mapData):
 
     # Main from here
     fringe = BinaryHeap.BinaryHeap()
-    closed = []
+    closed = {}
+    cost = 0.0
     #fValue = {}
     sStart.gValue = 0
     sStart.hValue = hFunc(sStart, sGoal)
+    sStart.fValue = hFunc(sStart, sGoal)
     fringe.insert(sStart)
     #fValue[sStart] = gValue[sStart] + hValue[sStart]
     path_id=[]
@@ -84,12 +87,12 @@ def Astar(sStart, sGoal, mapData):
         s = fringe.pop()
         if s == sGoal:
             print "path found"
-            cost = s.fValue()
+            cost = s.fValue
             print cost
             loc1 = findPath(s)
             break
         #temp_fValue = fValue.pop(s)
-        closed.append(s)
+        closed[s.key()] = s
         for i in range(-1,2):
             for j in range(-1,2):
                 if not(i == 0 and j == 0):
@@ -99,9 +102,9 @@ def Astar(sStart, sGoal, mapData):
                     if mapData[s.y+j][s.x+i] is not "0":
                         s_prime = Map.Location(s.x+i, s.y+j)
                         #print s_prime
-                        if s_prime not in closed:
+                        if closed.has_key(s_prime.key()) is False:
                             temp_gValue = s.gValue + distance(s, s_prime)
-                            if s_prime not in fringe.heap:
+                            if fringe.has(s_prime) is False:
                                 status = True
                             elif temp_gValue < s_prime.gValue:
                                 status = True
@@ -111,6 +114,7 @@ def Astar(sStart, sGoal, mapData):
                                 s_prime.parent = s
                                 s_prime.gValue = temp_gValue
                                 s_prime.hValue = hFunc(s_prime,sGoal)
+                                s_prime.fValue = s_prime.gValue+1*s_prime.hValue
                                 fringe.insert(s_prime)
     return path_id, cost
 

@@ -15,7 +15,9 @@ print mapData[goalLoc.y][goalLoc.x], goalLoc.x, goalLoc.y
 path_id, cost = Astar(startLoc, goalLoc, mapData)
 path_id.append(startLoc)
 path_id.reverse()
-print path_id
+# print path_id
+# for i in range(0, len(path_id)):
+#     print(str(path_id[i]))
 Map.savePath(path_id, cost)
 
 for i in range(0, len(path_id)-1):
