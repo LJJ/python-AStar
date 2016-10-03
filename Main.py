@@ -8,14 +8,12 @@ start = time.clock()
 
 mapData = Map.readMap()
 # createMap()
-start_x, start_y, goal_x, goal_y = Map.CreateStartGoal(mapData)
-print mapData[start_y][start_x], start_x, start_y
-print mapData[goal_y][goal_x], goal_x, goal_y
-sStart = (start_x, start_y)
-sGoal = (goal_x, goal_y)
+startLoc, goalLoc = Map.CreateStartGoal(mapData)
+print mapData[startLoc.y][startLoc.x], startLoc.x, startLoc.y
+print mapData[goalLoc.y][goalLoc.x], goalLoc.x, goalLoc.y
 
-path_id, cost = Astar(sStart, sGoal, mapData)
-path_id.append(sStart)
+path_id, cost = Astar(startLoc, goalLoc, mapData)
+path_id.append(startLoc)
 path_id.reverse()
 print path_id
 Map.savePath(path_id, cost)

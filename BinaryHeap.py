@@ -1,21 +1,24 @@
 __author__ = 'lujiji'
 import Map
-from __future__ import division
+# from __future__ import division
 
 class BinaryHeap:
     def __init__(self):
-        self.heap = [0]
+        self.heap = [Map.Location(0,0)]
 
     def insert(self, loc):
-        self.heap.append(loc)
-        self.up()
+        if loc not in self.heap:
+            self.heap.append(loc)
+            self.up()
 
+    def count(self):
+        return len(self.heap) - 1
 
     def up(self):
         cldIndex = len(self.heap) - 1
         while cldIndex//2 > 0:
             parIndex = cldIndex//2
-            if self.heap[cldIndex] < self.heap[parIndex]:
+            if self.heap[cldIndex].fValue() < self.heap[parIndex].fValue():
                 tmp = self.heap[parIndex]
                 self.heap[parIndex] = self.heap[cldIndex]
                 self.heap[cldIndex] = tmp
@@ -35,7 +38,7 @@ class BinaryHeap:
         parIndex = 1
         while parIndex*2 <= len(self.heap) - 1:
             minChild =self.minChild(parIndex)
-            if self.heap[parIndex] > self.heap[minChild]:
+            if self.heap[parIndex].fValue() > self.heap[minChild].fValue():
                 tmp = self.heap[parIndex]
                 self.heap[parIndex] = self.heap[minChild]
                 self.heap[minChild] = tmp
@@ -48,7 +51,7 @@ class BinaryHeap:
         if parIndex*2+1 > len(self.heap) - 1:
             return parIndex*2
         else:
-            if self.heap[parIndex*2]>self.heap[parIndex*2+1]:
+            if self.heap[parIndex*2].fValue()>self.heap[parIndex*2+1].fValue():
                 return parIndex*2+1
             else:
                 return parIndex*2

@@ -40,10 +40,16 @@ class Location:
     x = 0
     y = 0
     onBoundary = False
+    gValue = 0.0
+    hValue = 0.0
+    parent = None
 
     def __init__(self, x, y):
         self.x = x
         self.y = y
+
+    def fValue(self):
+        return self.gValue + self.hValue
 
     def realX(self):
         if self.x == 0:
@@ -61,8 +67,8 @@ class Location:
         else:
             return (self.y+0.5)*unit+border
 
-    def equal(self, loc):
-        if self.x == loc.x and self.y == loc.y:
+    def __eq__(self, other):
+        if self.x == other.x and self.y == other.y:
             return True
         else :
             return False
@@ -96,11 +102,13 @@ class Location:
     def distance(self, location):
         return abs(self.x-location.x) + abs(self.y-location.y)
 
+
+
 def isValidTarget(curLoc, tgLoc):
     locaitons = curLoc.getAllLocations(tgLoc)
     for l in range(0, len(locaitons)):
         loc = locaitons[l]
-        if loc.equal(curLoc) is True:
+        if loc == curLoc:
             continue
         if "a" in mapData[loc.y][loc.x] or "b" in mapData[loc.y][loc.x]:
             return False
@@ -250,18 +258,16 @@ def CreateStartGoal(mapData):
             goal_x, goal_y = GenerateStartGoal()
     w.create_oval(unit*start_x+border+1, unit*start_y+border+1, unit*(start_x+1)+border-1, unit*(start_y+1)+border-1, fill="red")
     w.create_oval(unit*goal_x+border+1, unit*goal_y+border+1, unit*(goal_x+1)+border-1, unit*(goal_y+1)+border-1, fill="green")
-    return start_x, start_y, goal_x, goal_y
+    return Location(start_x,start_y),Location(goal_x,goal_y)
 
 def DrawLines(locstart, locend):
-    w.create_line((locstart[0]+0.5)*unit+border, (locstart[1]+0.5)*unit+border, (locend[0]+0.5)*unit+border,(locend[1]+0.5)*unit+border, fill="red", width= 3)
+    w.create_line((locstart.x+0.5)*unit+border, (locstart.y+0.5)*unit+border, (locend.x+0.5)*unit+border,(locend.y+0.5)*unit+border, fill="red", width= 3)
 
 def savePath(path_id, cost):
     f = open("./path.txt","w")
     f.write("%f" % (cost))
     for i in range(0,len(path_id)):
-        line = ""
-        for j in range(0,len(path_id[i])):
-            line += "%s," % (path_id[i][j])
+        line = "%s,%s" % (path_id[i].x, path_id[i].y)
         f.write("\n"+line[:-1])
     f.close()
 
