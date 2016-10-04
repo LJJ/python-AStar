@@ -84,10 +84,10 @@ class Location:
         return True
 
     def getAllLocations(self, location):
-        x1 = min(self.x, location.x)
-        x2 = max(self.x, location.x)
-        y1 = min(self.y, location.y)
-        y2 = max(self.y, location.y)
+        x1 = min(int(self.x), int(location.x))
+        x2 = max(int(self.x), int(location.x))
+        y1 = min(int(self.y), int(location.y))
+        y2 = max(int(self.y), int(location.y))
         allLocations = []
         for i in range(x1,x2+1):
             for j in range(y1, y2+1):
@@ -222,7 +222,6 @@ def createMap():
             mapData[y][x] = "0"
             w.create_rectangle(unit*x+border, unit*y+border, unit*(x+1)+border, unit*(y+1)+border, fill="black")
             num_blocked += 1
-    saveMap()
     return mapData
 
 def GenerateStartGoal():

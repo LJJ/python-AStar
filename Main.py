@@ -4,58 +4,64 @@ from Astar import *
 
 import time
 
-start = time.clock()
 
-mapData = Map.readMap()
-# createMap()
-start_x, start_y, goal_x, goal_y = Map.CreateStartGoal(mapData)
 
-# start_x = 7
-# start_y = 5
-# goal_x = 141
-# goal_y = 113
-print mapData[start_y][start_x], start_x, start_y
-print mapData[goal_y][goal_x], goal_x, goal_y
-sStart = (start_x, start_y)
-sGoal = (goal_x, goal_y)
+mapData = None
 
-path_id, cost, num_of_nodes = Astar(sStart, sGoal, mapData)
-path_id.append(sStart)
-path_id.reverse()
-print path_id
-Map.savePath(path_id, cost)
-
-for i in range(0, len(path_id)-1):
-    Map.DrawLines(path_id[i], path_id[i+1])
-
-end = time.clock()
-print 'The number of nodes is', num_of_nodes
-print 'The path length is', cost
-print 'Running time is', end-start, 's'
-
-Map.mainloop()
 
 x = 0
-# while x != 6:
-#     display = ["Please input your choice:",
-#                "1. Create new map",
-#                "2. Read map from file",
-#                "3. Execute A* (WA* etc)",
-#                "4. Save result in file",
-#                "5. Save map in file",
-#                "6. Exit",
-#                "Enter your choice:",
-#                ]
+while x != 6:
+    display = ["Please input your choice:",
+               "1. Create new map",
+               "2. Read map from file",
+               "3. Execute A* (WA* etc)",
+               "4. Save result in file",
+               "5. Save map in file",
+               "6. Exit",
+               "Enter your choice:",
+               ]
 
 
-    # x = input("\n".join(display))
-    #
-    # if x == 1:
-    #     Map.createMap()
-    # elif x == 2:
-    #     Map.readMap()
-    # elif x == 4:
-    #     Map.saveMap()
-    # else:
-    #     print"Wrong number!"
-    #     continue
+    x = input("\n".join(display))
+
+    if x == 1:
+        mapData = Map.createMap()
+    elif x == 2:
+        mapData = Map.readMap()
+    elif x == 3:
+        start = time.clock()
+        start_x, start_y, goal_x, goal_y = Map.CreateStartGoal(mapData)
+
+        # start_x = 7
+        # start_y = 5
+        # goal_x = 141
+        # goal_y = 113
+        print mapData[start_y][start_x], start_x, start_y
+        print mapData[goal_y][goal_x], goal_x, goal_y
+        sStart = (start_x, start_y)
+        sGoal = (goal_x, goal_y)
+
+        path_id, cost, num_of_nodes = Astar(sStart, sGoal, mapData)
+        path_id.append(sStart)
+        path_id.reverse()
+        print path_id
+        Map.savePath(path_id, cost)
+
+        for i in range(0, len(path_id)-1):
+            Map.DrawLines(path_id[i], path_id[i+1])
+
+        end = time.clock()
+        print 'The number of nodes is', num_of_nodes
+        print 'The path length is', cost
+        print 'Running time is', end-start, 's'
+
+        Map.mainloop()
+    elif x == 4:
+        Map.savePath(path_id, cost)
+    elif x == 5:
+        Map.saveMap()
+    elif x == 6:
+        break
+    else:
+        print"Wrong number!"
+        continue

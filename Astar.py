@@ -6,10 +6,10 @@ def Astar(sStart, sGoal, mapData):
     # A-star algorithm
     def hFunc(current, goal):
         # hValue = 0.25 * (abs(current[0] - goal[0]) + abs(current[1] - goal[1]))
-        # hValue = (sqrt(2)-1)*min(abs(current[0] - goal[0]), abs(current[1] - goal[1]))+ max(abs(current[0] - goal[0]), abs(current[1] - goal[1]))
+        hValue = (sqrt(2)-1)*min(abs(current[0] - goal[0]), abs(current[1] - goal[1]))+ max(abs(current[0] - goal[0]), abs(current[1] - goal[1]))
         # hValue = abs(current[0] - goal[0]) + abs(current[1] - goal[1])
         # hValue = sqrt((current[0] - goal[0])**2 + (current[1] - goal[1])**2)
-        hValue = 2*((sqrt(2)-1)*min(abs(current[0] - goal[0]), abs(current[1] - goal[1]))+ max(abs(current[0] - goal[0]), abs(current[1] - goal[1])))
+        # hValue = 2*((sqrt(2)-1)*min(abs(current[0] - goal[0]), abs(current[1] - goal[1]))+ max(abs(current[0] - goal[0]), abs(current[1] - goal[1])))
         return hValue
 
     def distance(s, s_prime):
