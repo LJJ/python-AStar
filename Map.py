@@ -8,9 +8,10 @@ import math
 width = 160
 height = 120
 mapData = [["1" for i in range(width)] for j in range(height)]
-unit = 8.0
+unit = 6.0
 border = 5.0
 highwayLength = 20.0
+highwaywidth = 2
 allHighways = []
 
 def callback(self):
@@ -30,7 +31,7 @@ hbar.pack(side=BOTTOM,fill=X)
 hbar.config(command=w.xview)
 vbar=Scrollbar(frame,orient=VERTICAL)
 vbar.pack(side=RIGHT,fill=Y)
-w.config(width=1200,height=650)
+w.config(width=1200,height=750)
 # w.config(width=1290,height=970)
 w.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
 vbar.config(command=w.yview)
@@ -167,7 +168,7 @@ def drawHighway(highway):
     for i in range(0,len(highway)-1):
         curLoc = highway[i]
         nextLoc = highway[i+1]
-        w.create_line(curLoc.realX(),curLoc.realY(),nextLoc.realX(),nextLoc.realY(), fill="blue")
+        w.create_line(curLoc.realX(),curLoc.realY(),nextLoc.realX(),nextLoc.realY(), fill="blue", width = "3")
 
 def createGrid():
     for i in range(0, width+1):
@@ -233,8 +234,6 @@ def GenerateStartGoal():
 def CreateStartGoal(mapData):
 
     start_x, start_y = GenerateStartGoal()
-    start_x = 3
-    start_y = 3
     while mapData[start_y][start_x] == "0":
         start_x, start_y = GenerateStartGoal()
 
@@ -248,12 +247,17 @@ def CreateStartGoal(mapData):
             start_x, start_y = GenerateStartGoal()
         while mapData[goal_y][goal_x] == "0":
             goal_x, goal_y = GenerateStartGoal()
+
+    start_x = 7
+    start_y = 5
+    goal_x = 141
+    goal_y = 113
     w.create_oval(unit*start_x+border+1, unit*start_y+border+1, unit*(start_x+1)+border-1, unit*(start_y+1)+border-1, fill="red")
     w.create_oval(unit*goal_x+border+1, unit*goal_y+border+1, unit*(goal_x+1)+border-1, unit*(goal_y+1)+border-1, fill="green")
     return start_x, start_y, goal_x, goal_y
 
 def DrawLines(locstart, locend):
-    w.create_line((locstart[0]+0.5)*unit+border, (locstart[1]+0.5)*unit+border, (locend[0]+0.5)*unit+border,(locend[1]+0.5)*unit+border, fill="red", width= 3)
+    w.create_line((locstart[0]+0.5)*unit+border, (locstart[1]+0.5)*unit+border, (locend[0]+0.5)*unit+border,(locend[1]+0.5)*unit+border, fill="red", width=highwaywidth)
 
 def savePath(path_id, cost):
     f = open("./path.txt","w")
@@ -301,8 +305,8 @@ def readMap():
                 nextLoc = None
                 if x+1<len(mapData[y]) and len(mapData[y][x+1]) == 2 and status[-1] == mapData[y][x+1][-1]:
                     nextLoc = Location(x+1,y)
-                    w.create_line(curLoc.realX(),curLoc.realY(),nextLoc.realX(),nextLoc.realY(), fill="blue")
+                    w.create_line(curLoc.realX(),curLoc.realY(),nextLoc.realX(),nextLoc.realY(), fill="blue", width=highwaywidth)
                 if y+1<len(mapData) and len(mapData[y+1][x]) == 2 and status[-1] == mapData[y+1][x][-1]:
                     nextLoc = Location(x,y+1)
-                    w.create_line(curLoc.realX(),curLoc.realY(),nextLoc.realX(),nextLoc.realY(), fill="blue")
+                    w.create_line(curLoc.realX(),curLoc.realY(),nextLoc.realX(),nextLoc.realY(), fill="blue", width=highwaywidth)
     return mapData

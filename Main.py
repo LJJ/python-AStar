@@ -10,16 +10,16 @@ mapData = Map.readMap()
 # createMap()
 start_x, start_y, goal_x, goal_y = Map.CreateStartGoal(mapData)
 
-start_x = 0
-start_y = 0
-goal_x = 145
-goal_y = 116
+# start_x = 7
+# start_y = 5
+# goal_x = 141
+# goal_y = 113
 print mapData[start_y][start_x], start_x, start_y
 print mapData[goal_y][goal_x], goal_x, goal_y
 sStart = (start_x, start_y)
 sGoal = (goal_x, goal_y)
 
-path_id, cost = Astar(sStart, sGoal, mapData)
+path_id, cost, num_of_nodes = Astar(sStart, sGoal, mapData)
 path_id.append(sStart)
 path_id.reverse()
 print path_id
@@ -29,7 +29,9 @@ for i in range(0, len(path_id)-1):
     Map.DrawLines(path_id[i], path_id[i+1])
 
 end = time.clock()
-print 'Running time is:', end-start
+print 'The number of nodes is', num_of_nodes
+print 'The path length is', cost
+print 'Running time is', end-start, 's'
 
 Map.mainloop()
 

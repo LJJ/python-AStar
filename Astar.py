@@ -5,16 +5,11 @@ from math import *
 def Astar(sStart, sGoal, mapData):
     # A-star algorithm
     def hFunc(current, goal):
-        distConst= sqrt((current[0]- goal[0])**2+(current[1]- goal[1])**2)
-        if distConst > 1:
-            hValue = (sqrt(2)-1)*min(abs(current[0] - goal[0]), abs(current[1] - goal[1]))+ max(abs(current[0] - goal[0]), abs(current[1] - goal[1]))
-        else:
-            hValue = 0.25 * (abs(current[0] - goal[0]) + abs(current[1] - goal[1]))
-
         # hValue = 0.25 * (abs(current[0] - goal[0]) + abs(current[1] - goal[1]))
-        # hValue = 0.25 * ((sqrt(2)-1)*min(abs(current[0] - goal[0]), abs(current[1] - goal[1]))+ max(abs(current[0] - goal[0]), abs(current[1] - goal[1])))
-        # hValue = sqrt((current[0] - goal[0])**2 + (current[1] - goal[1])**2)
+        # hValue = (sqrt(2)-1)*min(abs(current[0] - goal[0]), abs(current[1] - goal[1]))+ max(abs(current[0] - goal[0]), abs(current[1] - goal[1]))
         # hValue = abs(current[0] - goal[0]) + abs(current[1] - goal[1])
+        # hValue = sqrt((current[0] - goal[0])**2 + (current[1] - goal[1])**2)
+        hValue = 2*((sqrt(2)-1)*min(abs(current[0] - goal[0]), abs(current[1] - goal[1]))+ max(abs(current[0] - goal[0]), abs(current[1] - goal[1])))
         return hValue
 
     def distance(s, s_prime):
@@ -92,12 +87,14 @@ def Astar(sStart, sGoal, mapData):
     fringe[sStart] = gValue[sStart] + w * hValue[sStart]
     #fValue[sStart] = gValue[sStart] + hValue[sStart]
     path_id=[]
+    num_of_nodes = 0
     while fringe != {}:
+        num_of_nodes+=1
         s = min(fringe.items(), key=lambda x: x[1])[0]
         if s == sGoal:
             print "path found"
             cost = fringe[s]
-            print cost
+            #print cost
             loc1 = findPath(path, sGoal)
             break
         temp_dis = fringe.pop(s)
@@ -126,5 +123,5 @@ def Astar(sStart, sGoal, mapData):
                                 gValue[s_prime] = temp_gValue
                                 hValue[s_prime] = hFunc(s_prime, sGoal)
                                 fringe[s_prime] = gValue[s_prime] + w * hValue[s_prime]
-    return path_id, cost
+    return path_id, cost, num_of_nodes
 
