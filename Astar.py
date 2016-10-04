@@ -88,7 +88,7 @@ def Astar(sStart, sGoal, mapData):
         if s == sGoal:
             print "path found"
             cost = s.fValue
-            print cost
+            print "cost: %f" % (cost)
             loc1 = findPath(s)
             break
         #temp_fValue = fValue.pop(s)
@@ -106,15 +106,17 @@ def Astar(sStart, sGoal, mapData):
                             temp_gValue = s.gValue + distance(s, s_prime)
                             if fringe.has(s_prime) is False:
                                 status = True
-                            elif temp_gValue < s_prime.gValue:
-                                status = True
                             else:
-                                status = False
+                                s_prime = fringe.getLoc(s_prime.key())
+                                if temp_gValue < s_prime.gValue:
+                                    status = True
+                                else:
+                                    status = False
                             if status == True:
                                 s_prime.parent = s
                                 s_prime.gValue = temp_gValue
                                 s_prime.hValue = hFunc(s_prime,sGoal)
-                                s_prime.fValue = s_prime.gValue+1*s_prime.hValue
+                                s_prime.fValue = s_prime.gValue+1.0*s_prime.hValue
                                 fringe.insert(s_prime)
     return path_id, cost
 

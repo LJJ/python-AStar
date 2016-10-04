@@ -11,20 +11,30 @@ class BinaryHeap:
         if self.has(loc) is False:
             self.check[loc.key()] = loc
             self.heap.append(loc)
-            self.up()
+            self.up(len(self.heap) - 1)
+        else:
+            self.reorder(loc)
 
     def count(self):
         return len(self.heap) - 1
 
-    def up(self):
-        cldIndex = len(self.heap) - 1
+    def reorder(self, loc):
+        target = self.check[loc.key()]
+        self.up(target.index)
+
+
+    def up(self, i):
+        cldIndex = i
         while cldIndex//2 > 0:
             parIndex = cldIndex//2
             if self.heap[cldIndex].fValue < self.heap[parIndex].fValue:
-                tmp = self.heap[parIndex]
-                self.heap[parIndex] = self.heap[cldIndex]
-                self.heap[cldIndex] = tmp
+                tmp = self.heap[cldIndex]
+                self.heap[cldIndex] = self.heap[parIndex]
+                self.heap[parIndex] = tmp
+                self.heap[parIndex].index = parIndex
+                self.heap[cldIndex].index = cldIndex
                 cldIndex = parIndex
+
             else:
                 break
 
@@ -33,19 +43,22 @@ class BinaryHeap:
             result = self.heap[1]
             self.heap[1] = self.heap[-1]
             self.heap.pop()
-            self.down()
+            self.down(1)
             self.check.pop(result.key())
             return result
 
-    def down(self):
-        parIndex = 1
+    def down(self,i):
+        parIndex = i
         while parIndex*2 <= len(self.heap) - 1:
             minChild =self.minChild(parIndex)
             if self.heap[parIndex].fValue > self.heap[minChild].fValue:
                 tmp = self.heap[parIndex]
                 self.heap[parIndex] = self.heap[minChild]
                 self.heap[minChild] = tmp
+                self.heap[parIndex].index = parIndex
+                self.heap[minChild].index = minChild
                 parIndex = minChild
+
             else:
                 break
 
@@ -62,5 +75,6 @@ class BinaryHeap:
     def has(self, other):
         return self.check.has_key(other.key())
 
-
+    def getLoc(self, key):
+         return self.check[key]
 
