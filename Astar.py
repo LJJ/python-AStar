@@ -1,8 +1,12 @@
 __author__ = 'SiyuChen and lujiji'
 from math import *
-import Map
 import BinaryHeap
 import time
+import Node
+
+
+fringe = BinaryHeap.BinaryHeap()
+closed = {}
 
 def Astar(sStart, sGoal, mapData):
     # A-star algorithm
@@ -73,18 +77,17 @@ def Astar(sStart, sGoal, mapData):
             current = current.parent
 
     # Main from here
-    fringe = BinaryHeap.BinaryHeap()
-    closed = {}
     cost = 0.0
     #fValue = {}
     sStart.gValue = 0
     sStart.hValue = hFunc(sStart, sGoal)
-    sStart.fValue = hFunc(sStart, sGoal)
+    sStart.fValue = 0*hFunc(sStart, sGoal)
     fringe.insert(sStart)
     #fValue[sStart] = gValue[sStart] + hValue[sStart]
     path_id=[]
     while fringe.count() > 0:
         s = fringe.pop()
+        print(s.x ,s.y, s.gValue, s.fValue)
         if s == sGoal:
             print "path found"
             cost = s.fValue
@@ -100,11 +103,13 @@ def Astar(sStart, sGoal, mapData):
                         # print s.x, s.y, i, j
                         continue
                     if mapData[s.y+j][s.x+i] is not "0":
-                        s_prime = Map.Location(s.x+i, s.y+j)
+                        s_prime = Node.Location(s.x+i, s.y+j)
                         #print s_prime
                         if closed.has_key(s_prime.key()) is False:
                             temp_gValue = s.gValue + distance(s, s_prime)
                             if fringe.has(s_prime) is False:
+                                s_prime.fValue = float('inf')
+                                s_prime.parent = None
                                 status = True
                             else:
                                 s_prime = fringe.getLoc(s_prime.key())
@@ -116,7 +121,12 @@ def Astar(sStart, sGoal, mapData):
                                 s_prime.parent = s
                                 s_prime.gValue = temp_gValue
                                 s_prime.hValue = hFunc(s_prime,sGoal)
-                                s_prime.fValue = s_prime.gValue+1.0*s_prime.hValue
+                                s_prime.fValue = s_prime.gValue+0*s_prime.hValue
                                 fringe.insert(s_prime)
     return path_id, cost
 
+def output(target):
+    if fringe.has(target) is True:
+        print(fringe.getLoc(target.key()))
+    elif closed.has_key(target.key()):
+        print(closed[target.key()])

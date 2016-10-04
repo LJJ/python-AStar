@@ -45,6 +45,7 @@ class BinaryHeap:
             self.heap.pop()
             self.down(1)
             self.check.pop(result.key())
+
             return result
 
     def down(self,i):

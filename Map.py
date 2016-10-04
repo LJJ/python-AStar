@@ -3,6 +3,8 @@ __author__ = 'lujiji and SiyuChen'
 from Tkinter import *
 import random
 import math
+from Node import Location
+import Astar
 
 
 width = 160
@@ -14,8 +16,9 @@ highwayLength = 20.0
 allHighways = []
 
 def callback(self):
-    loc = Location(math.floor((w.canvasx(self.x)-border)/unit),math.floor((w.canvasy(self.y)-border)/unit))
-    print loc.x,loc.y
+    loc = MapLocation(math.floor((w.canvasx(self.x)-border)/unit),math.floor((w.canvasy(self.y)-border)/unit))
+    Astar.output(loc)
+    # print loc.x,loc.y
 
 
 master = Tk()
@@ -36,28 +39,12 @@ w.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
 vbar.config(command=w.yview)
 w.pack()
 
-class Location:
-    x = 0
-    y = 0
-    onBoundary = False
-    gValue = 0.0
-    hValue = 0.0
-    parent = None
-    fValue = 0.0
-    index = 0
+class MapLocation(Location):
 
     def __init__(self, x, y):
         self.x = x
         self.y = y
 
-    def __str__(self):
-        return "%s,%s,%s,%s,%s" % (self.x,self.y, self.gValue, self.hValue, self.fValue)
-
-    # def fValue(self):
-    #     return self.gValue + self.hValue
-
-    def key(self):
-        return "%d%d" % (self.x,self.y)
 
     def realX(self):
         if self.x == 0:
@@ -74,18 +61,6 @@ class Location:
             return height*unit+border
         else:
             return (self.y+0.5)*unit+border
-
-    def __eq__(self, other):
-        if self.x == other.x and self.y == other.y:
-            return True
-        else :
-            return False
-
-    # def __contains__(self, other):
-    #     if self == other:
-    #         return True
-    #     else:
-    #         return False
 
     def checkExceeded(self):
         if self.x >= width-1:
@@ -109,7 +84,7 @@ class Location:
         allLocations = []
         for i in range(x1,x2+1):
             for j in range(y1, y2+1):
-                allLocations.append(Location(i,j))
+                allLocations.append(MapLocation(i,j))
         return allLocations
 
     def distance(self, location):
@@ -159,15 +134,15 @@ def expandHighway(highway):
             return
 
     i = random.randrange(0, 11)
-    nextLoc = Location(0,0)
+    nextLoc = MapLocation(0,0)
     if i < 6:
-        nextLoc = Location(curLoc.x*2 - preLoc.x, curLoc.y*2 - preLoc.y)
+        nextLoc = MapLocation(curLoc.x*2 - preLoc.x, curLoc.y*2 - preLoc.y)
     else:
         power = random.randrange(0,2)
         if curLoc.x == preLoc.x:
-            nextLoc = Location(curLoc.x+(-1)**power*highwayLength,curLoc.y)
+            nextLoc = MapLocation(curLoc.x+(-1)**power*highwayLength,curLoc.y)
         else:
-            nextLoc = Location(curLoc.x,curLoc.y+(-1)**power*highwayLength)
+            nextLoc = MapLocation(curLoc.x,curLoc.y+(-1)**power*highwayLength)
     nextLoc.checkExceeded()
     highway.append(nextLoc)
     expandHighway(highway)
@@ -217,20 +192,20 @@ def createMap():
         dir = random.randrange(0,4)
         if dir == 0:
             x = 0
-            highway.append(Location(x,y))
-            highway.append(Location(x+20,y))
+            highway.append(MapLocation(x,y))
+            highway.append(MapLocation(x+20,y))
         elif dir == 1:
             y = 0
-            highway.append(Location(x,y))
-            highway.append(Location(x,y+20))
+            highway.append(MapLocation(x,y))
+            highway.append(MapLocation(x,y+20))
         elif dir == 2:
             x = width-1
-            highway.append(Location(x,y))
-            highway.append(Location(x-20,y))
+            highway.append(MapLocation(x,y))
+            highway.append(MapLocation(x-20,y))
         else:
             y = height-1
-            highway.append(Location(x,y))
-            highway.append(Location(x,y-20))
+            highway.append(MapLocation(x,y))
+            highway.append(MapLocation(x,y-20))
         expandHighway(highway)
 
     # Add blocked cells
@@ -271,7 +246,7 @@ def CreateStartGoal(mapData):
             goal_x, goal_y = GenerateStartGoal()
     w.create_oval(unit*start_x+border+1, unit*start_y+border+1, unit*(start_x+1)+border-1, unit*(start_y+1)+border-1, fill="red")
     w.create_oval(unit*goal_x+border+1, unit*goal_y+border+1, unit*(goal_x+1)+border-1, unit*(goal_y+1)+border-1, fill="green")
-    return Location(start_x,start_y),Location(goal_x,goal_y)
+    return MapLocation(start_x,start_y),MapLocation(goal_x,goal_y)
 
 def DrawLines(locstart, locend):
     w.create_line((locstart.x+0.5)*unit+border, (locstart.y+0.5)*unit+border, (locend.x+0.5)*unit+border,(locend.y+0.5)*unit+border, fill="red", width= 3)
@@ -316,12 +291,12 @@ def readMap():
         for x in range(0,len(mapData[y])):
             status = mapData[y][x]
             if "b" in status or "a" in status:
-                curLoc = Location(x,y)
+                curLoc = MapLocation(x,y)
                 nextLoc = None
                 if x+1<len(mapData[y]) and len(mapData[y][x+1]) == 2 and status[-1] == mapData[y][x+1][-1]:
-                    nextLoc = Location(x+1,y)
+                    nextLoc = MapLocation(x+1,y)
                     w.create_line(curLoc.realX(),curLoc.realY(),nextLoc.realX(),nextLoc.realY(), fill="blue")
                 if y+1<len(mapData) and len(mapData[y+1][x]) == 2 and status[-1] == mapData[y+1][x][-1]:
-                    nextLoc = Location(x,y+1)
+                    nextLoc = MapLocation(x,y+1)
                     w.create_line(curLoc.realX(),curLoc.realY(),nextLoc.realX(),nextLoc.realY(), fill="blue")
     return mapData

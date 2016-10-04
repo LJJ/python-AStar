@@ -8,7 +8,7 @@ start = time.clock()
 
 mapData = Map.readMap()
 # createMap()
-startLoc, goalLoc = Map.CreateStartGoal(mapData)
+startLoc, goalLoc = Map.Location(140,104), Map.Location(1,10)#Map.CreateStartGoal(mapData)
 print mapData[startLoc.y][startLoc.x], startLoc.x, startLoc.y
 print mapData[goalLoc.y][goalLoc.x], goalLoc.x, goalLoc.y
 
