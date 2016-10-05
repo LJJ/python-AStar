@@ -9,6 +9,7 @@ class BinaryHeap:
 
     def insert(self, loc):
         if self.has(loc) is False:
+
             self.check[loc.key()] = loc
             self.heap.append(loc)
             self.up(len(self.heap) - 1)

@@ -79,15 +79,18 @@ def Astar(sStart, sGoal, mapData):
     # Main from here
     cost = 0.0
     #fValue = {}
+    w=1.0
     sStart.gValue = 0
     sStart.hValue = hFunc(sStart, sGoal)
-    sStart.fValue = 0*hFunc(sStart, sGoal)
+    sStart.fValue = w*hFunc(sStart, sGoal)
     fringe.insert(sStart)
+    record = False
     #fValue[sStart] = gValue[sStart] + hValue[sStart]
     path_id=[]
     while fringe.count() > 0:
         s = fringe.pop()
-        print(s.x ,s.y, s.gValue, s.fValue)
+        if record is True:
+            print(s.key())
         if s == sGoal:
             print "path found"
             cost = s.fValue
@@ -100,11 +103,11 @@ def Astar(sStart, sGoal, mapData):
             for j in range(-1,2):
                 if not(i == 0 and j == 0):
                     if s.y+j > 119 or s.x+i > 159 or s.y+j < 0 or s.x+i < 0:
-                        # print s.x, s.y, i, j
                         continue
                     if mapData[s.y+j][s.x+i] is not "0":
                         s_prime = Node.Location(s.x+i, s.y+j)
-                        #print s_prime
+                        if s_prime == Node.Location(120,97):
+                            record = True
                         if closed.has_key(s_prime.key()) is False:
                             temp_gValue = s.gValue + distance(s, s_prime)
                             if fringe.has(s_prime) is False:
@@ -121,7 +124,7 @@ def Astar(sStart, sGoal, mapData):
                                 s_prime.parent = s
                                 s_prime.gValue = temp_gValue
                                 s_prime.hValue = hFunc(s_prime,sGoal)
-                                s_prime.fValue = s_prime.gValue+0*s_prime.hValue
+                                s_prime.fValue = s_prime.gValue+w*s_prime.hValue
                                 fringe.insert(s_prime)
     return path_id, cost
 

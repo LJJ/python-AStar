@@ -10,7 +10,7 @@ import Astar
 width = 160
 height = 120
 mapData = [["1" for i in range(width)] for j in range(height)]
-unit = 8.0
+unit = 12.0
 border = 5.0
 highwayLength = 20.0
 allHighways = []
