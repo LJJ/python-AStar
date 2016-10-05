@@ -1,7 +1,6 @@
 __author__ = 'SiyuChen and lujiji'
 from math import *
 import BinaryHeap
-import time
 import Node
 
 
@@ -84,13 +83,10 @@ def Astar(sStart, sGoal, mapData):
     sStart.hValue = hFunc(sStart, sGoal)
     sStart.fValue = w*hFunc(sStart, sGoal)
     fringe.insert(sStart)
-    record = False
     #fValue[sStart] = gValue[sStart] + hValue[sStart]
     path_id=[]
     while fringe.count() > 0:
         s = fringe.pop()
-        if record is True:
-            print(s.key())
         if s == sGoal:
             print "path found"
             cost = s.fValue
@@ -106,8 +102,6 @@ def Astar(sStart, sGoal, mapData):
                         continue
                     if mapData[s.y+j][s.x+i] is not "0":
                         s_prime = Node.Location(s.x+i, s.y+j)
-                        if s_prime == Node.Location(120,97):
-                            record = True
                         if closed.has_key(s_prime.key()) is False:
                             temp_gValue = s.gValue + distance(s, s_prime)
                             if fringe.has(s_prime) is False:

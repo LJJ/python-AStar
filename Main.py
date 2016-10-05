@@ -5,10 +5,10 @@ from Astar import *
 import time
 
 start = time.clock()
-
-mapData = Map.readMap()
+map = Map.Map()
+mapData = map.readMap()
 # createMap()
-startLoc, goalLoc = Map.Location(140,104), Map.Location(1,10)#Map.CreateStartGoal(mapData)
+startLoc, goalLoc = map.CreateStartGoal(mapData) #Map.Location(140,104), Map.Location(1,10)
 print mapData[startLoc.y][startLoc.x], startLoc.x, startLoc.y
 print mapData[goalLoc.y][goalLoc.x], goalLoc.x, goalLoc.y
 
@@ -18,10 +18,10 @@ path_id.reverse()
 # print path_id
 # for i in range(0, len(path_id)):
 #     print(str(path_id[i]))
-Map.savePath(path_id, cost)
+map.savePath(path_id, cost)
 
 for i in range(0, len(path_id)-1):
-    Map.DrawLines(path_id[i], path_id[i+1])
+    map.DrawLines(path_id[i], path_id[i+1])
 
 end = time.clock()
 print 'Running time is:', end-start
