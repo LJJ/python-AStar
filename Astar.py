@@ -7,8 +7,12 @@ import Node
 fringe = BinaryHeap.BinaryHeap()
 closed = {}
 
-def Astar(sStart, sGoal, mapData):
+def Astar(sStart, sGoal, mapData, wa):
     # A-star algorithm
+    global fringe
+    fringe = BinaryHeap.BinaryHeap()
+    global closed
+    closed = {}
     def hFunc(current, goal):
         hValue =(sqrt(2)-1)*min(abs(current.x - goal.x), abs(current.y- goal.y))+ max(abs(current.x- goal.x), abs(current.y- goal.y))
         return hValue
@@ -78,7 +82,7 @@ def Astar(sStart, sGoal, mapData):
     # Main from here
     cost = 0.0
     #fValue = {}
-    w=1.0
+    w=wa
     sStart.gValue = 0
     sStart.hValue = hFunc(sStart, sGoal)
     sStart.fValue = w*hFunc(sStart, sGoal)

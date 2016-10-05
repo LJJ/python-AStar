@@ -26,21 +26,21 @@ class MapLocation(Location):
     def distance(self, location):
         return abs(self.x-location.x) + abs(self.y-location.y)
 
-unit = 12.0
+unit = 8.0
 border = 5.0
-highwayLength = 20.0
+highwayLength = 20
 
 class Map:
     width = 160
     height = 120
-    allHighways = []
-    w = None
 
-    def __init__(self, width = 120, height = 160):
+
+    def __init__(self, width = 160, height = 120):
         self.width = width
         self.height = height
         self.mapData = [["1" for i in range(width)] for j in range(height)]
-
+        self.allHighways = []
+        self.w = None
 
     def prepare(self):
         master = Tk()
@@ -62,8 +62,8 @@ class Map:
         self.w.pack()
 
 
-    def callback(self):
-        loc = MapLocation(math.floor((self.w.canvasx(self.x)-border)/unit),math.floor((self.w.canvasy(self.y)-border)/unit))
+    def callback(self, event):
+        loc = MapLocation(math.floor((self.w.canvasx(event.x)-border)/unit),math.floor((self.w.canvasy(event.y)-border)/unit))
         Astar.output(loc)
         # print loc.x,loc.y
 
@@ -188,7 +188,7 @@ class Map:
                     if random.randrange(0,2) == 0:
                         if self.mapData[k][j] is not "2":
                             self.mapData[k][j] = "2"
-                            w.create_rectangle(unit*j+border,unit*k+border,unit*(j+1)+border,unit*(k+1)+border, fill="gray")
+                            self.w.create_rectangle(unit*j+border,unit*k+border,unit*(j+1)+border,unit*(k+1)+border, fill="gray")
     
         while len(self.allHighways)<4:
             highway = []
@@ -224,7 +224,6 @@ class Map:
                 self.mapData[y][x] = "0"
                 self.w.create_rectangle(unit*x+border, unit*y+border, unit*(x+1)+border, unit*(y+1)+border, fill="black")
                 num_blocked += 1
-        self.saveMap()
         return self.mapData
     
     def GenerateStartGoal(self):
@@ -233,23 +232,21 @@ class Map:
         position_y = possibility*random.randrange(0, 20)+ (1-possibility)*random.randrange(self.height-20, self.height)
         return position_x, position_y
     
-    def CreateStartGoal(self,mapData):
+    def CreateStartGoal(self):
     
         start_x, start_y = self.GenerateStartGoal()
-        start_x = 3
-        start_y = 3
-        while mapData[start_y][start_x] == "0":
+        while self.mapData[start_y][start_x] == "0":
             start_x, start_y = self.GenerateStartGoal()
     
         goal_x, goal_y = self.GenerateStartGoal()
-        while mapData[goal_y][goal_x] == "0":
+        while self.mapData[goal_y][goal_x] == "0":
             goal_x, goal_y = self.GenerateStartGoal()
     
         while math.sqrt((start_x - goal_x)**2+(start_y - goal_y)**2) < 100:
             start_x, start_y = self.GenerateStartGoal()
-            while mapData[start_y][start_x] == "0":
+            while self.mapData[start_y][start_x] == "0":
                 start_x, start_y = self.GenerateStartGoal()
-            while mapData[goal_y][goal_x] == "0":
+            while self.mapData[goal_y][goal_x] == "0":
                 goal_x, goal_y = self.GenerateStartGoal()
         self.w.create_oval(unit*start_x+border+1, unit*start_y+border+1, unit*(start_x+1)+border-1, unit*(start_y+1)+border-1, fill="red")
         self.w.create_oval(unit*goal_x+border+1, unit*goal_y+border+1, unit*(goal_x+1)+border-1, unit*(goal_y+1)+border-1, fill="green")
@@ -279,32 +276,32 @@ class Map:
     def readMap(self):
         content = open("./test.txt").read()
         lines = content.split("\n")
-        mapData = []
+        self.mapData = []
         self.width = int(lines[0].split(",")[1])
         self.height = int(lines[0].split(",")[0])
         self.prepare()
         for i in range(1, len(lines)):
-            mapData.append(lines[i].split(","))
+            self.mapData.append(lines[i].split(","))
             # print(id(mapData))
     
         self.createGrid()
-        for y in range(0,len(mapData)):
-            for x in range(0,len(mapData[y])):
-                status = mapData[y][x]
+        for y in range(0,len(self.mapData)):
+            for x in range(0,len(self.mapData[y])):
+                status = self.mapData[y][x]
                 if status is "0":
                     self.w.create_rectangle(x*unit+border,y*unit+border,(x+1)*unit+border,(y+1)*unit+border, fill="black")
                 elif status is "2" or "b" in status:
                     self.w.create_rectangle(x*unit+border,y*unit+border,(x+1)*unit+border,(y+1)*unit+border, fill="gray")
-        for y in range(0,len(mapData)):
-            for x in range(0,len(mapData[y])):
-                status = mapData[y][x]
+        for y in range(0,len(self.mapData)):
+            for x in range(0,len(self.mapData[y])):
+                status = self.mapData[y][x]
                 if "b" in status or "a" in status:
                     curLoc = MapLocation(x,y)
                     nextLoc = None
-                    if x+1<len(mapData[y]) and len(mapData[y][x+1]) == 2 and status[-1] == mapData[y][x+1][-1]:
+                    if x+1<len(self.mapData[y]) and len(self.mapData[y][x+1]) == 2 and status[-1] == self.mapData[y][x+1][-1]:
                         nextLoc = MapLocation(x+1,y)
                         self.w.create_line(self.realX(curLoc),self.realY(curLoc),self.realX(nextLoc),self.realY(nextLoc), fill="blue")
-                    if y+1<len(mapData) and len(mapData[y+1][x]) == 2 and status[-1] == mapData[y+1][x][-1]:
+                    if y+1<len(self.mapData) and len(self.mapData[y+1][x]) == 2 and status[-1] == self.mapData[y+1][x][-1]:
                         nextLoc = MapLocation(x,y+1)
                         self.w.create_line(self.realX(curLoc),self.realY(curLoc),self.realX(nextLoc),self.realY(nextLoc), fill="blue")
-        return mapData
+        return self.mapData

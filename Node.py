@@ -16,7 +16,7 @@ class Location:
         self.y = y
 
     def __str__(self):
-        return "%s,%s\n%.2f,%.2f,%.2f" % (self.x,self.y, self.gValue, self.hValue, self.fValue)
+        return "Location (%s,%s)\ng-value:%.1f h-value:%.1f f-value%.1f" % (self.x,self.y, self.gValue, self.hValue, self.fValue)
 
     # def fValue(self):
     #     return self.gValue + self.hValue
