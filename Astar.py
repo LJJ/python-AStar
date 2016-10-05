@@ -14,7 +14,11 @@ def Astar(sStart, sGoal, mapData, wa):
     global closed
     closed = {}
     def hFunc(current, goal):
-        hValue =(sqrt(2)-1)*min(abs(current.x - goal.x), abs(current.y- goal.y))+ max(abs(current.x- goal.x), abs(current.y- goal.y))
+        hValue = 0.25 * (abs(current.x - goal.x) + abs(current.y - goal.y))
+        # hValue = (sqrt(2)-1)*min(abs(current.x - goal.x), abs(current.y - goal.y))+ max(abs(current.x - goal.x), abs(current.y - goal.y))
+        # hValue = abs(current.x - goal.x) + abs(current.y - goal.y)
+        # hValue = sqrt((current.x - goal.x)**2 + (current.y - goal.y)**2)
+        # hValue = 2*((sqrt(2)-1)*min(abs(current.x - goal.x), abs(current.y - goal.y))+ max(abs(current.x - goal.x), abs(current.y - goal.y)))
         return hValue
 
     #print mapData

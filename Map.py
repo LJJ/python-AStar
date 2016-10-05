@@ -41,6 +41,7 @@ class Map:
         self.mapData = [["1" for i in range(width)] for j in range(height)]
         self.allHighways = []
         self.w = None
+        self.eightLoc = []
 
     def prepare(self):
         master = Tk()
@@ -55,8 +56,8 @@ class Map:
         hbar.config(command=self.w.xview)
         vbar=Scrollbar(frame,orient=VERTICAL)
         vbar.pack(side=RIGHT,fill=Y)
-        self.w.config(width=1200,height=650)
-        # w.config(width=1290,height=970)
+        # self.w.config(width=1200,height=650)
+        self.w.config(width=1290,height=800)
         self.w.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
         vbar.config(command=self.w.yview)
         self.w.pack()
@@ -183,6 +184,7 @@ class Map:
         for i in range(0, 8):
             x = random.randrange(15, self.width-15)
             y = random.randrange(15, self.height-15)
+            self.eightLoc.append(Location(x,y))
             for j in range(x-15,x+15):
                 for k in range(y-15,y+15):
                     if random.randrange(0,2) == 0:
@@ -266,6 +268,12 @@ class Map:
     def saveMap(self):
         f = open("./test.txt","w")
         f.write("%d,%d" % (self.height,self.width))
+
+        for i in range(0,len(self.eightLoc)):
+            loc = self.eightLoc[i]
+            line = "%s,%s" % (loc.x,loc.y)
+            f.write("\n"+line)
+
         for i in range(0,len(self.mapData)):
             line = ""
             for j in range(0,len(self.mapData[i])):
@@ -280,7 +288,7 @@ class Map:
         self.width = int(lines[0].split(",")[1])
         self.height = int(lines[0].split(",")[0])
         self.prepare()
-        for i in range(1, len(lines)):
+        for i in range(9, len(lines)):
             self.mapData.append(lines[i].split(","))
             # print(id(mapData))
     
