@@ -1,127 +1,137 @@
 __author__ = 'SiyuChen and lujiji'
 from math import *
+import BinaryHeap
+import Node
 
 
-def Astar(sStart, sGoal, mapData):
+fringe = BinaryHeap.BinaryHeap()
+closed = {}
+
+def Astar(sStart, sGoal, mapData, wa):
     # A-star algorithm
+    global fringe
+    fringe = BinaryHeap.BinaryHeap()
+    global closed
+    closed = {}
     def hFunc(current, goal):
-        # hValue = 0.25 * (abs(current[0] - goal[0]) + abs(current[1] - goal[1]))
-        hValue = (sqrt(2)-1)*min(abs(current[0] - goal[0]), abs(current[1] - goal[1]))+ max(abs(current[0] - goal[0]), abs(current[1] - goal[1]))
-        # hValue = abs(current[0] - goal[0]) + abs(current[1] - goal[1])
-        # hValue = sqrt((current[0] - goal[0])**2 + (current[1] - goal[1])**2)
-        # hValue = 2*((sqrt(2)-1)*min(abs(current[0] - goal[0]), abs(current[1] - goal[1]))+ max(abs(current[0] - goal[0]), abs(current[1] - goal[1])))
+        hValue = 0.25 * (abs(current.x - goal.x) + abs(current.y - goal.y))
+        # hValue = (sqrt(2)-1)*min(abs(current.x - goal.x), abs(current.y - goal.y))+ max(abs(current.x - goal.x), abs(current.y - goal.y))
+        # hValue = abs(current.x - goal.x) + abs(current.y - goal.y)
+        # hValue = sqrt((current.x - goal.x)**2 + (current.y - goal.y)**2)
+        # hValue = 2*((sqrt(2)-1)*min(abs(current.x - goal.x), abs(current.y - goal.y))+ max(abs(current.x - goal.x), abs(current.y - goal.y)))
         return hValue
 
+    #print mapData
+
     def distance(s, s_prime):
-        # print mapData[s[1]][s[0]], mapData[s_prime[1]][s_prime[0]]
-        distConst= sqrt((s[0]- s_prime[0])**2+(s[1]- s_prime[1])**2)
-        if mapData[s[1]][s[0]] == '1':
-            if mapData[s_prime[1]][s_prime[0]] == '1':
+        # print mapData[s.y][s.x], mapData[s_prime.y][s_prime.x]
+        distConst= sqrt((s.x- s_prime.x)**2+(s.y- s_prime.y)**2)
+        if mapData[s.y][s.x] == '1':
+            if mapData[s_prime.y][s_prime.x] == '1':
                 dist =distConst
-            elif mapData[s_prime[1]][s_prime[0]] == '2':
+            elif mapData[s_prime.y][s_prime.x] == '2':
                 dist =1.5* distConst
-            elif 'a' in mapData[s_prime[1]][s_prime[0]]:
+            elif 'a' in mapData[s_prime.y][s_prime.x]:
                 dist =distConst
-            elif 'b' in mapData[s_prime[1]][s_prime[0]]:
+            elif 'b' in mapData[s_prime.y][s_prime.x]:
                 dist =1.5* distConst
-        elif mapData[s[1]][s[0]] == '2':
-            if mapData[s_prime[1]][s_prime[0]] == '1':
+        elif mapData[s.y][s.x] == '2':
+            if mapData[s_prime.y][s_prime.x] == '1':
                 dist =1.5* distConst
-            elif mapData[s_prime[1]][s_prime[0]] == '2':
+            elif mapData[s_prime.y][s_prime.x] == '2':
                 dist =2* distConst
-            elif 'a' in mapData[s_prime[1]][s_prime[0]]:
+            elif 'a' in mapData[s_prime.y][s_prime.x]:
                 dist =1.5* distConst
-            elif 'b' in mapData[s_prime[1]][s_prime[0]]:
+            elif 'b' in mapData[s_prime.y][s_prime.x]:
                 dist =2* distConst
-        elif 'a' in mapData[s[1]][s[0]]:
-            if mapData[s_prime[1]][s_prime[0]] == '1':
+        elif 'a' in mapData[s.y][s.x]:
+            if mapData[s_prime.y][s_prime.x] == '1':
                 dist =distConst
-            elif mapData[s_prime[1]][s_prime[0]] == '2':
+            elif mapData[s_prime.y][s_prime.x] == '2':
                 dist =1.5* distConst
-            elif 'a' in mapData[s_prime[1]][s_prime[0]]:
+            elif 'a' in mapData[s_prime.y][s_prime.x]:
                 if distConst >1:
                     dist= distConst
                 else:
                     dist =0.25* distConst
-            elif 'b' in mapData[s_prime[1]][s_prime[0]]:
+            elif 'b' in mapData[s_prime.y][s_prime.x]:
                 if distConst >1:
                     dist= 1.5* distConst
                 else:
                     dist =0.375* distConst
-        elif 'b' in mapData[s[1]][s[0]]:
-            if mapData[s_prime[1]][s_prime[0]] == '1':
+        elif 'b' in mapData[s.y][s.x]:
+            if mapData[s_prime.y][s_prime.x] == '1':
                 dist =1.5* distConst
-            elif mapData[s_prime[1]][s_prime[0]] == '2':
+            elif mapData[s_prime.y][s_prime.x] == '2':
                 dist =2* distConst
-            elif 'a' in mapData[s_prime[1]][s_prime[0]]:
+            elif 'a' in mapData[s_prime.y][s_prime.x]:
                 if distConst > 1:
                     dist= 1.5* distConst
                 else:
                     dist =0.375* distConst
-            elif 'b' in mapData[s_prime[1]][s_prime[0]]:
+            elif 'b' in mapData[s_prime.y][s_prime.x]:
                 if distConst >1:
                     dist= 2* distConst
                 else:
                     dist =0.5* distConst
-        #dist =sqrt((s[0]- s_prime[0])**2+(s[1]- s_prime[1])**2)
+        #dist =sqrt((s.x- s_prime.x)**2+(s.y- s_prime.y)**2)
         return dist
 
-    def findPath(path, current):
-        locstart=current
-        path_id.append(locstart)
-        while path[current] in path:
-            locend = findPath(path, path[current])
-            current = locend
-            return locstart
+    def findPath(current):
+        path_id.append(current)
+        while current.parent is not None:
+            path_id.append(current.parent)
+            current = current.parent
 
     # Main from here
-    fringe = {}
-    closed = {}
-    path = {}
-    gValue = {}
-    hValue = {}
+    cost = 0.0
     #fValue = {}
-    w = 1
-    gValue[sStart] = 0
-    hValue[sStart] = hFunc(sStart, sGoal)
-    fringe[sStart] = gValue[sStart] + w * hValue[sStart]
+    w=wa
+    sStart.gValue = 0
+    sStart.hValue = hFunc(sStart, sGoal)
+    sStart.fValue = w*hFunc(sStart, sGoal)
+    fringe.insert(sStart)
     #fValue[sStart] = gValue[sStart] + hValue[sStart]
     path_id=[]
-    num_of_nodes = 0
-    while fringe != {}:
-        num_of_nodes+=1
-        s = min(fringe.items(), key=lambda x: x[1])[0]
+    while fringe.count() > 0:
+        s = fringe.pop()
         if s == sGoal:
             print "path found"
-            cost = fringe[s]
-            #print cost
-            loc1 = findPath(path, sGoal)
+            cost = s.fValue
+            print "cost: %f" % (cost)
+            loc1 = findPath(s)
             break
-        temp_dis = fringe.pop(s)
         #temp_fValue = fValue.pop(s)
-        closed[s] = temp_dis
+        closed[s.key()] = s
         for i in range(-1,2):
             for j in range(-1,2):
                 if not(i == 0 and j == 0):
-                    if s[1]+j > 119 or s[0]+i > 159 or s[1]+j < 0 or s[0]+i < 0:
-                        # print s[0], s[1], i, j
+                    if s.y+j > 119 or s.x+i > 159 or s.y+j < 0 or s.x+i < 0:
                         continue
-                    if mapData[s[1]+j][s[0]+i] is not "0":
-                        s_prime = (s[0]+i, s[1]+j)
-                        #print s_prime
-                        if s_prime not in closed:
-                            temp_gValue = gValue[s] + distance(s, s_prime)
-                            if s_prime not in fringe:
-                                fringe[s_prime] = float('inf')
-                                status = True
-                            elif temp_gValue < gValue[s_prime]:
+                    if mapData[s.y+j][s.x+i] is not "0":
+                        s_prime = Node.Location(s.x+i, s.y+j)
+                        if closed.has_key(s_prime.key()) is False:
+                            temp_gValue = s.gValue + distance(s, s_prime)
+                            if fringe.has(s_prime) is False:
+                                s_prime.fValue = float('inf')
+                                s_prime.parent = None
                                 status = True
                             else:
-                                status = False
+                                s_prime = fringe.getLoc(s_prime.key())
+                                if temp_gValue < s_prime.gValue:
+                                    status = True
+                                else:
+                                    status = False
                             if status == True:
-                                path[s_prime] = s
-                                gValue[s_prime] = temp_gValue
-                                hValue[s_prime] = hFunc(s_prime, sGoal)
-                                fringe[s_prime] = gValue[s_prime] + w * hValue[s_prime]
-    return path_id, cost, num_of_nodes
+                                s_prime.parent = s
+                                s_prime.gValue = temp_gValue
+                                s_prime.hValue = hFunc(s_prime,sGoal)
+                                s_prime.fValue = s_prime.gValue+w*s_prime.hValue
+                                fringe.insert(s_prime)
+    return path_id, cost
 
+def output(target):
+    if fringe.has(target) is True:
+        print(fringe.getLoc(target.key()))
+    elif closed.has_key(target.key()):
+        print(closed[target.key()])
