@@ -71,11 +71,15 @@ def seqAstar(sStart, sGoal, mapD, wa):
         gValueArray[i][sGoal.key()] = float('inf')
         fValueArray[i][sStart.key()] = w1*heuristicArray[i].hValue(sStart,sGoal)
         fringeArray[i].insert(sStart,fValueArray[i][sStart.key()])
+        print fValueArray[i][sStart.key()]
+
+    print fValueArray
 
     while fringeArray[0].minValue() < float('inf'):
         for i in range(1, len(heuristicArray)):
             # print(len(fringeArray[i].heap))
             if fringeArray[i].minValue() <= w2*fringeArray[0].minValue():
+                # print fringeArray[i].minValue(), w2*fringeArray[0].minValue()
                 if gValueArray[i][sGoal.key()] < fringeArray[i].minValue():
                     if gValueArray[i][sGoal.key()] < float('inf'):
                         path_id = findPath(sGoal, i)
@@ -91,6 +95,7 @@ def seqAstar(sStart, sGoal, mapD, wa):
                 else:
                     s = fringeArray[0].pop()
                     expand(s,sGoal,0)
+                    print '123'
     return [], fValueArray[sGoal.key()]
 
 def expand(s, goal, i):
@@ -101,13 +106,13 @@ def expand(s, goal, i):
     fringe = fringeArray[i]
     closed = closedArray[i]
     closed[s.key()] = s
-    for i in range(-1,2):
-            for j in range(-1,2):
-                if not(i == 0 and j == 0):
-                    if s.y+j > 119 or s.x+i > 159 or s.y+j < 0 or s.x+i < 0:
+    for m in range(-1,2):
+            for n in range(-1,2):
+                if not(m == 0 and n == 0):
+                    if s.y+n > 119 or s.x+m > 159 or s.y+n < 0 or s.x+m < 0:
                         continue
-                    if mapData[s.y+j][s.x+i] is not "0":
-                        s_prime = Node.Location(s.x+i, s.y+j)
+                    if mapData[s.y+n][s.x+m] is not "0":
+                        s_prime = Node.Location(s.x+m, s.y+n)
                         if closed.has_key(s_prime.key()) is False:
                             temp_gValue = gValue[s.key()] + distance(s, s_prime)
                             if fringe.has(s_prime) is False:
@@ -123,7 +128,7 @@ def expand(s, goal, i):
                             if status == True:
                                 parent[s_prime.key()] = s
                                 gValue[s_prime.key()] = temp_gValue
-                                fValue[s_prime.key()] = gValue[s_prime.key()]+w1*HeuristicOptimal.hValue(s_prime,goal)
+                                fValue[s_prime.key()] = gValue[s_prime.key()]+w1*heuristicArray[i].hValue(s_prime,goal)
                                 fringe.insert(s_prime, fValue[s_prime.key()])
 
 def intAstar(sStart, sGoal, mapD, wa):
