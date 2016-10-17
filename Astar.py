@@ -85,9 +85,9 @@ def Astar(sStart, sGoal, mapData, wa):
 
     # Main from here
     cost = 0.0
-    #fValue = {}
+    gValue = {}
     w=wa
-    sStart.gValue = 0
+    gValue[sStart.key()] = 0.0
     sStart.hValue = hFunc(sStart, sGoal)
     sStart.fValue = w*hFunc(sStart, sGoal)
     fringe.insert(sStart)
@@ -111,22 +111,22 @@ def Astar(sStart, sGoal, mapData, wa):
                     if mapData[s.y+j][s.x+i] is not "0":
                         s_prime = Node.Location(s.x+i, s.y+j)
                         if closed.has_key(s_prime.key()) is False:
-                            temp_gValue = s.gValue + distance(s, s_prime)
+                            temp_gValue = gValue[s.key()] + distance(s, s_prime)
                             if fringe.has(s_prime) is False:
                                 s_prime.fValue = float('inf')
                                 s_prime.parent = None
                                 status = True
                             else:
                                 s_prime = fringe.getLoc(s_prime.key())
-                                if temp_gValue < s_prime.gValue:
+                                if temp_gValue < gValue[s_prime.key()]:
                                     status = True
                                 else:
                                     status = False
                             if status == True:
                                 s_prime.parent = s
-                                s_prime.gValue = temp_gValue
+                                gValue[s_prime.key()] = temp_gValue
                                 s_prime.hValue = hFunc(s_prime,sGoal)
-                                s_prime.fValue = s_prime.gValue+w*s_prime.hValue
+                                s_prime.fValue = gValue[s_prime.key()]+w*s_prime.hValue
                                 fringe.insert(s_prime)
     return path_id, cost
 

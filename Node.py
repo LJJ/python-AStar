@@ -5,7 +5,6 @@ class Location:
     x = 0
     y = 0
     onBoundary = False
-    gValue = 0.0
     hValue = 0.0
     parent = None
     fValue = 0.0
