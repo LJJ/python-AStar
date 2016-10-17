@@ -12,7 +12,8 @@ class BinaryHeap:
 
             self.check[loc.key()] = loc
             self.heap.append(loc)
-            self.up(len(self.heap) - 1)
+            loc.index = len(self.heap) - 1
+            self.up(loc.index)
         else:
             self.reorder(loc)
 
