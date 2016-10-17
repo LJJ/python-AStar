@@ -103,6 +103,7 @@ def expand(s, goal, i):
     parent = parentArray[i]
     fringe = fringeArray[i]
     closed = closedArray[i]
+    previousMinValue = 0
     closed[s.key()] = s
     for m in range(-1,2):
             for n in range(-1,2):
@@ -127,6 +128,11 @@ def expand(s, goal, i):
                                 parent[s_prime.key()] = s
                                 gValue[s_prime.key()] = temp_gValue
                                 fValue[s_prime.key()] = gValue[s_prime.key()]+w1*heuristicArray[i].hValue(s_prime,goal)
+                                # if i == 0:
+                                #     if fringeArray[i].minValue() > previousMinValue:
+                                #         fringe.insert(s_prime, fValue[s_prime.key()])
+                                #         previousMinValue = fringeArray[i].minValue()
+                                # else:
                                 fringe.insert(s_prime, fValue[s_prime.key()])
 
 def intAstar(sStart, sGoal, mapD, wa):
@@ -137,8 +143,9 @@ def intAstar(sStart, sGoal, mapD, wa):
     w2 = 1.0
     gValueArray[0][sStart.key()] = 0.0
     gValueArray[0][sGoal.key()] = float('inf')
-    fValueArray[0][sStart.key()] = w1*heuristicArray[0].hValue(sStart,sGoal)
+    # fValueArray[0][sStart.key()] = w1*heuristicArray[0].hValue(sStart,sGoal)
     for i in range(0,len(heuristicArray)):
+        fValueArray[i][sStart.key()] = w1*heuristicArray[i].hValue(sStart,sGoal)
         fringeArray[i].insert(sStart,fValueArray[i][sStart.key()])
 
     while fringeArray[0].minValue() < float('inf'):
@@ -167,9 +174,10 @@ def intAstar(sStart, sGoal, mapD, wa):
 def expandInt(s, goal):
     w1 = 1.0
     gValue = gValueArray[0]
-    for i in len(fringeArray):
+    print type(gValue)
+    print fringeArray
+    for i in range(len(fringeArray)):
         fringeArray[i].remove(s)
-
 
     # fValue = fValueArray[i]
     parent = parentArray[0]
