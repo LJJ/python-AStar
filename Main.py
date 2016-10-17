@@ -9,7 +9,7 @@ def show(wa):
     print mapData[startLoc.y][startLoc.x], startLoc.x, startLoc.y
     print mapData[goalLoc.y][goalLoc.x], goalLoc.x, goalLoc.y
 
-    path_id, cost = Astar(startLoc, goalLoc, mapData, wa)
+    path_id, cost = seqAstar(startLoc, goalLoc, mapData, wa)
     path_id.append(startLoc)
     path_id.reverse()
 

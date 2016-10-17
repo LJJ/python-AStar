@@ -51,6 +51,10 @@ class BinaryHeap:
 
             return result
 
+    def minValue(self):
+        if len(self.heap) > 1:
+            return self.heap[1].fValue
+
     def down(self,i):
         parIndex = i
         while parIndex*2 <= len(self.heap) - 1:
