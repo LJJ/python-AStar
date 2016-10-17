@@ -51,6 +51,15 @@ class BinaryHeap:
 
             return result
 
+    def remove(self, loc):
+        if self.has(loc) is True:
+            target = self.check[loc.key()]
+            self.heap[-1].index = target.index
+            self.heap[target.index] = self.heap[-1]
+            self.heap.pop()
+            self.check.pop(target.key())
+            self.down(target.index)
+
     def minValue(self):
         if len(self.heap) > 1:
             return self.heap[1].fValue
@@ -79,6 +88,9 @@ class BinaryHeap:
                 return parIndex*2+1
             else:
                 return parIndex*2
+
+
+
 
     def has(self, other):
         return self.check.has_key(other.key())

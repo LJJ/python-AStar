@@ -11,7 +11,7 @@ mapData = None
 parentArray = []
 fValueArray = []
 gValueArray = []
-heuristicArray = [HeuristicOptimal(),HeuristicOne,HeuristicTwo,HeuristicThree,HeuristicFour]
+heuristicArray = [HeuristicOptimal,HeuristicOne,HeuristicTwo,HeuristicThree,HeuristicFour]
 
 def resetAllData(amount):
     global fringeArray
@@ -125,6 +125,73 @@ def expand(s, goal, i):
                                 gValue[s_prime.key()] = temp_gValue
                                 fValue[s_prime.key()] = gValue[s_prime.key()]+w1*HeuristicOptimal.hValue(s_prime,goal)
                                 fringe.insert(s_prime, fValue[s_prime.key()])
+
+def intAstar(sStart, sGoal, mapD, wa):
+    resetAllData(len(heuristicArray))
+    global mapData
+    mapData = mapD
+    w1 = 1.0
+    w2 = 1.0
+    gValueArray[0][sStart.key()] = 0.0
+    gValueArray[0][sGoal.key()] = float('inf')
+    fValueArray[0][sStart.key()] = w1*heuristicArray[0].hValue(sStart,sGoal)
+    for i in range(0,len(heuristicArray)):
+        fringeArray[i].insert(sStart,fValueArray[i][sStart.key()])
+
+    while fringeArray[0].minValue() < float('inf'):
+        for i in range(1, len(heuristicArray)):
+            # print(len(fringeArray[i].heap))
+            if fringeArray[i].minValue() <= w2*fringeArray[0].minValue():
+                if gValueArray[0][sGoal.key()] < fringeArray[i].minValue():
+                    if gValueArray[0][sGoal.key()] < float('inf'):
+                        path_id = findPath(sGoal, 0)
+                        return path_id, fValueArray[0][sGoal.key()]
+                else:
+                    s = fringeArray[i].pop()
+                    expandInt(s,sGoal)
+                    closedArray[1][s.key()] = s
+            else:
+                if gValueArray[0][sGoal.key()] <= fringeArray[0].minValue():
+                    if gValueArray[0][sGoal.key()] < float('inf'):
+                        path_id =findPath(sGoal, 0)
+                        return path_id, fValueArray[0][sGoal.key()]
+                else:
+                    s = fringeArray[0].pop()
+                    expandInt(s,sGoal)
+                    closedArray[0][s.key()] = s
+    return [], fValueArray[sGoal.key()]
+
+def expandInt(s, goal):
+    w1 = 1.0
+    gValue = gValueArray[0]
+    for i in len(fringeArray):
+        fringeArray[i].remove(s)
+
+
+    # fValue = fValueArray[i]
+    parent = parentArray[0]
+    # closed = closedArray[i]
+    for m in range(-1,2):
+            for n in range(-1,2):
+                if not(m == 0 and n == 0):
+                    if s.y+n > 119 or s.x+m > 159 or s.y+n < 0 or s.x+m < 0:
+                        continue
+                    if mapData[s.y+n][s.x+m] is not "0":
+                        s_prime = Node.Location(s.x+m, s.y+n)
+                        temp_gValue = gValue[s.key()] + distance(s, s_prime)
+                        if temp_gValue < gValue[s_prime.key()]:
+                            if closedArray[0].has_key(s_prime.key()) is False:
+                                parent[s_prime.key()] = s
+                                gValue[s_prime.key()] = temp_gValue
+                                fValueArray[0][s_prime.key()] = gValue[s_prime.key()]+w1*HeuristicOptimal.hValue(s_prime,goal)
+                                fringeArray[0].insert(s_prime, fValueArray[0][s_prime.key()])
+                                if closedArray[1].has_key(s_prime.key()) is False:
+                                    for i in range(1, len(heuristicArray)):
+                                        parent[s_prime.key()] = s
+                                        gValue[s_prime.key()] = temp_gValue
+                                        fValueArray[i][s_prime.key()] = gValue[s_prime.key()]+w1*HeuristicOptimal.hValue(s_prime,goal)
+                                        fringeArray[i].insert(s_prime, fValueArray[i][s_prime.key()])
+
 
 def findPath(current, i):
     path_id = []
