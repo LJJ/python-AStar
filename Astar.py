@@ -11,7 +11,6 @@ mapData = None
 parentArray = []
 fValueArray = []
 gValueArray = []
-pathIdArray = []
 heuristicArray = [HeuristicOptimal(),HeuristicOne,HeuristicTwo,HeuristicThree,HeuristicFour]
 
 def resetAllData(amount):
@@ -27,8 +26,6 @@ def resetAllData(amount):
     hValueArray = [{} for i in range(amount)]
     global fValueArray
     fValueArray = [{} for i in range(amount)]
-    global pathIdArray
-    pathIdArray = [[] for i in range(amount)]
 
 def Astar(sStart, sGoal, mapD, wa):
     # A-star algorithm
@@ -42,12 +39,12 @@ def Astar(sStart, sGoal, mapD, wa):
     parent = parentArray[0]
     fringe = fringeArray[0]
     closed = closedArray[0]
-    path_id = pathIdArray[0]
 
     w=wa
     gValue[sStart.key()] = 0.0
     fValue[sStart.key()] = HeuristicOptimal.hValue(sStart, sGoal)
     fringe.insert(sStart, fValue[sStart.key()])
+    path_id = []
 
     while fringe.count() > 0:
         s = fringe.pop()
@@ -69,9 +66,7 @@ def seqAstar(sStart, sGoal, mapD, wa):
     mapData = mapD
     w1 = 1.0
     w2 = 1.0
-
     for i in range(0,len(heuristicArray)):
-        path_id = pathIdArray[i]
         gValueArray[i][sStart.key()] = 0.0
         gValueArray[i][sGoal.key()] = float('inf')
         fValueArray[i][sStart.key()] = w1*heuristicArray[i].hValue(sStart,sGoal)
@@ -79,24 +74,24 @@ def seqAstar(sStart, sGoal, mapD, wa):
 
     while fringeArray[0].minValue() < float('inf'):
         for i in range(1, len(heuristicArray)):
-            print(len(fringeArray[i].heap))
+            # print(len(fringeArray[i].heap))
             if fringeArray[i].minValue() <= w2*fringeArray[0].minValue():
                 if gValueArray[i][sGoal.key()] < fringeArray[i].minValue():
                     if gValueArray[i][sGoal.key()] < float('inf'):
-                        findPath(sGoal, i)
-                        return path_id, fValueArray[sGoal.key()]
+                        path_id = findPath(sGoal, i)
+                        return path_id, fValueArray[i][sGoal.key()]
                 else:
                     s = fringeArray[i].pop()
                     expand(s,sGoal,i)
             else:
                 if gValueArray[0][sGoal.key()] <= fringeArray[0].minValue():
                     if gValueArray[0][sGoal.key()] < float('inf'):
-                        findPath(sGoal, 0)
-                        return path_id, fValueArray[sGoal.key()]
+                        path_id =findPath(sGoal, 0)
+                        return path_id, fValueArray[0][sGoal.key()]
                 else:
                     s = fringeArray[0].pop()
                     expand(s,sGoal,0)
-    return path_id, fValueArray[sGoal.key()]
+    return [], fValueArray[sGoal.key()]
 
 def expand(s, goal, i):
     w1 = 1.0
@@ -105,7 +100,6 @@ def expand(s, goal, i):
     parent = parentArray[i]
     fringe = fringeArray[i]
     closed = closedArray[i]
-    path_id=pathIdArray[i]
     closed[s.key()] = s
     for i in range(-1,2):
             for j in range(-1,2):
@@ -133,12 +127,13 @@ def expand(s, goal, i):
                                 fringe.insert(s_prime, fValue[s_prime.key()])
 
 def findPath(current, i):
-    path_id = pathIdArray[i]
+    path_id = []
     parent = parentArray[i]
     path_id.append(current)
     while parent.has_key(current.key()):
         path_id.append(parent[current.key()])
         current = parent[current.key()]
+    return path_id
 
 def output(target):
     if fringe.has(target) is True:
