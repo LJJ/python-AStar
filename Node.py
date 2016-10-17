@@ -5,8 +5,6 @@ class Location:
     x = 0
     y = 0
     onBoundary = False
-    hValue = 0.0
-    parent = None
     fValue = 0.0
     index = 0
 
@@ -14,8 +12,8 @@ class Location:
         self.x = x
         self.y = y
 
-    def __str__(self):
-        return "Location (%s,%s)\ng-value:%.1f h-value:%.1f f-value%.1f" % (self.x,self.y, self.gValue, self.hValue, self.fValue)
+    # def __str__(self):
+    #     return "Location (%s,%s)\ng-value:%.1f h-value:%.1f f-value%.1f" % (self.x,self.y, self.gValue, self.hValue, self.fValue)
 
     # def fValue(self):
     #     return self.gValue + self.hValue

@@ -7,7 +7,8 @@ class BinaryHeap:
         self.heap = [Map.Location(0,0)]
         self.check = {}
 
-    def insert(self, loc):
+    def insert(self, loc, fValue):
+        loc.fValue = fValue
         if self.has(loc) is False:
 
             self.check[loc.key()] = loc
