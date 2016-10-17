@@ -1,5 +1,6 @@
 __author__ = 'lujiji'
 import Map
+import copy
 # from __future__ import division
 
 class BinaryHeap:
@@ -7,10 +8,10 @@ class BinaryHeap:
         self.heap = [Map.Location(0,0)]
         self.check = {}
 
-    def insert(self, loc, fValue):
+    def insert(self, aLoc, fValue):
+        loc = copy.copy(aLoc)
         loc.fValue = fValue
         if self.has(loc) is False:
-
             self.check[loc.key()] = loc
             self.heap.append(loc)
             loc.index = len(self.heap) - 1

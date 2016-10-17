@@ -1,6 +1,7 @@
 __author__ = 'lujiji'
 
 
+
 class Location:
     x = 0
     y = 0
@@ -12,8 +13,13 @@ class Location:
         self.x = x
         self.y = y
 
-    # def __str__(self):
-    #     return "Location (%s,%s)\ng-value:%.1f h-value:%.1f f-value%.1f" % (self.x,self.y, self.gValue, self.hValue, self.fValue)
+    # def __init__(self, loc):
+    #     self.x = loc.x
+    #     self.y = loc.y
+    #     self.fValue = loc.fValue
+
+    def __str__(self):
+        return "Location (%s,%s)\n f-value%.1f" % (self.x,self.y, self.fValue)
 
     # def fValue(self):
     #     return self.gValue + self.hValue

@@ -71,9 +71,8 @@ def seqAstar(sStart, sGoal, mapD, wa):
         gValueArray[i][sGoal.key()] = float('inf')
         fValueArray[i][sStart.key()] = w1*heuristicArray[i].hValue(sStart,sGoal)
         fringeArray[i].insert(sStart,fValueArray[i][sStart.key()])
-        print fValueArray[i][sStart.key()]
 
-    print fValueArray
+    print fringeArray[0].heap[1], fringeArray[1].heap[1],fringeArray[2].heap[1]
 
     while fringeArray[0].minValue() < float('inf'):
         for i in range(1, len(heuristicArray)):
@@ -95,7 +94,6 @@ def seqAstar(sStart, sGoal, mapD, wa):
                 else:
                     s = fringeArray[0].pop()
                     expand(s,sGoal,0)
-                    print '123'
     return [], fValueArray[sGoal.key()]
 
 def expand(s, goal, i):
