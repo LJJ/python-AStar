@@ -11,6 +11,7 @@ mapData = None
 parentArray = []
 fValueArray = []
 gValueArray = []
+result_i = 0
 heuristicArray = [HeuristicOptimal,HeuristicOne,HeuristicTwo,HeuristicThree,HeuristicFour]
 
 def resetAllData(amount):
@@ -72,16 +73,14 @@ def seqAstar(sStart, sGoal, mapD, wa):
         fValueArray[i][sStart.key()] = w1*heuristicArray[i].hValue(sStart,sGoal)
         fringeArray[i].insert(sStart,fValueArray[i][sStart.key()])
 
-    print fringeArray[0].heap[1], fringeArray[1].heap[1],fringeArray[2].heap[1]
-
     while fringeArray[0].minValue() < float('inf'):
         for i in range(1, len(heuristicArray)):
-            # print(len(fringeArray[i].heap))
             if fringeArray[i].minValue() <= w2*fringeArray[0].minValue():
-                # print fringeArray[i].minValue(), w2*fringeArray[0].minValue()
                 if gValueArray[i][sGoal.key()] < fringeArray[i].minValue():
                     if gValueArray[i][sGoal.key()] < float('inf'):
                         path_id = findPath(sGoal, i)
+                        global result_i
+                        result_i = i
                         return path_id, fValueArray[i][sGoal.key()]
                 else:
                     s = fringeArray[i].pop()
@@ -90,6 +89,8 @@ def seqAstar(sStart, sGoal, mapD, wa):
                 if gValueArray[0][sGoal.key()] <= fringeArray[0].minValue():
                     if gValueArray[0][sGoal.key()] < float('inf'):
                         path_id =findPath(sGoal, 0)
+                        global result_i
+                        result_i = 0
                         return path_id, fValueArray[0][sGoal.key()]
                 else:
                     s = fringeArray[0].pop()
@@ -118,7 +119,7 @@ def expand(s, goal, i):
                                 s_prime.parent = None
                                 status = True
                             else:
-                                s_prime = fringe.getLoc(s_prime.key())  #don't remove
+                                # s_prime = fringe.getLoc(s_prime.key())  #don't remove
                                 if temp_gValue < gValue[s_prime.key()]:
                                     status = True
                                 else:
@@ -206,6 +207,8 @@ def findPath(current, i):
     return path_id
 
 def output(target):
+    fringe = fringeArray[result_i]
+    closed = closedArray[result_i]
     if fringe.has(target) is True:
         print(fringe.getLoc(target.key()))
     elif closed.has_key(target.key()):
