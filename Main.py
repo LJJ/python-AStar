@@ -12,7 +12,7 @@ def show(wa, numSG):
         print "Start point is", mapData[startLoc.y][startLoc.x], startLoc.x, startLoc.y
         print "Goal point is", mapData[goalLoc.y][goalLoc.x], goalLoc.x, goalLoc.y
 
-        path_id, cost = seqAstar(startLoc, goalLoc, mapData, wa)
+        path_id, cost = intAstar(startLoc, goalLoc, mapData, wa)
         totalCost += cost
         path_id.append(startLoc)
         path_id.reverse()
