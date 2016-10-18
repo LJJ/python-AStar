@@ -127,8 +127,8 @@ while x != 7:
     elif x == 6:
         w1 = input("input W1:")
         w2 = input("input W2:")
-        numMap = 5
-        numSG = 10
+        numMap = 1
+        numSG = 1
         pathLengthSeq = 0
         nodeExpandSeq = 0
         pathLengthInt = 0
@@ -136,7 +136,7 @@ while x != 7:
         memorySeq = 0.0
         memoryInt = 0.0
         pathLengthOrig = 0.0
-        nodeExpandOrig = 0.0
+        nodeExpandOrig = 0
         memoryOrig = 0.0
         start = time.clock()
         for i in range(0,numMap):

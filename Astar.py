@@ -45,7 +45,7 @@ class Astar():
         gValue[sStart.key()] = 0.0
         fringe.insert(sStart, HeuristicOptimal.hValue(sStart, sGoal))
         path_id = []
-
+        numNodesOri = 0
         while fringe.count() > 0:
             s = fringe.pop()
             if s == sGoal:
@@ -55,7 +55,8 @@ class Astar():
                 break
             closed[s.key()] = s
             self.expand(s,sGoal,0)
-        return path_id, cost, 0
+        numNodesOri = len(closed)
+        return path_id, cost, numNodesOri
 
     def expand(self, s, goal, i):
         gValue = self.gValueArray[i]
