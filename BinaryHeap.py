@@ -100,6 +100,6 @@ class BinaryHeap:
     def getLoc(self, key):
          return self.check[key]
 
-    # def getFvalue(self, loc):
-    #     return self.fValue[loc.key()]
+    def getFvalue(self, loc):
+        return self.fValue[loc.key()]
 
