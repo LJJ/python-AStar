@@ -13,6 +13,8 @@ gValueArray = []
 exist = {}
 result_i = 0
 heuristicArray = [HeuristicOptimal,HeuristicOne,HeuristicTwo,HeuristicThree,HeuristicFour]
+w1 = 1.0
+w2 = 1.0
 
 def resetAllData(amount):
     global fringeArray
@@ -63,8 +65,6 @@ def seqAstar(sStart, sGoal, mapD, wa):
     resetAllData(len(heuristicArray))
     global mapData
     mapData = mapD
-    w1 = 1.0
-    w2 = 1.0
     for i in range(0,len(heuristicArray)):
         gValueArray[i][sStart.key()] = 0.0
         gValueArray[i][sGoal.key()] = float('inf')
@@ -95,7 +95,6 @@ def seqAstar(sStart, sGoal, mapD, wa):
     return [], fringeArray[0].getFvalue(sGoal)
 
 def expand(s, goal, i):
-    w1 = 1.0
     gValue = gValueArray[i]
     parent = parentArray[i]
     fringe = fringeArray[i]
@@ -115,7 +114,6 @@ def expand(s, goal, i):
                                 gValue[s_prime.key()] = float('inf') #warning
                                 status = True
                             else:
-                                # s_prime = fringe.getLoc(s_prime.key())  #don't remove
                                 if temp_gValue < gValue[s_prime.key()]:
                                     status = True
                                 else:
@@ -123,14 +121,13 @@ def expand(s, goal, i):
                             if status == True:
                                 parent[s_prime.key()] = s
                                 gValue[s_prime.key()] = temp_gValue
-                                fringe.insert(s_prime, gValue[s_prime.key()]+w1*heuristicArray[i].hValue(s_prime,goal))
+                                fValue_i =  gValue[s_prime.key()]+w1*heuristicArray[i].hValue(s_prime,goal)
+                                fringe.insert(s_prime, fValue_i)
 
 def intAstar(sStart, sGoal, mapD, wa):
     resetAllData(len(heuristicArray))
     global mapData
     mapData = mapD
-    w1 = 1.0
-    w2 = 1.0
     gValueArray[0][sStart.key()] = 0.0
     gValueArray[0][sGoal.key()] = float('inf')
     exist[sStart.key()] = True
@@ -139,7 +136,6 @@ def intAstar(sStart, sGoal, mapD, wa):
 
     while fringeArray[0].minValue() < float('inf'):
         for i in range(1, len(heuristicArray)):
-            # print fringeArray[i].minValue(), w2*fringeArray[0].minValue()
             if fringeArray[i].minValue() <= w2*fringeArray[0].minValue():
                 if gValueArray[0][sGoal.key()] <= fringeArray[i].minValue():
                     if gValueArray[0][sGoal.key()] < float('inf'):
@@ -163,8 +159,6 @@ def intAstar(sStart, sGoal, mapD, wa):
     return [], fringeArray[0].getFvalue(sGoal)
 
 def expandInt(s, goal):
-    w1 = 1.0
-    w2 = 1.0
     gValue = gValueArray[0]
     for i in range(len(fringeArray)):
         fringeArray[i].remove(s)
