@@ -65,8 +65,23 @@ def show(w1, w2, numSG, read = False):
     # Map.mainloop()
 
 
-def showSingle():
-    pass
+def showSingle(w1, w2, read = False):
+    if read is False:
+        startLoc, goalLoc = map.CreateStartGoal()
+    else:
+        startLoc = map.start
+        goalLoc = map.goal
+
+    map.algorithm = Astar(mapData, w1, w2)
+    path_id, cost, nodes  = map.algorithm.execute(startLoc, goalLoc)
+
+    path_id.append(startLoc)
+    path_id.reverse()
+    for i in range(0, len(path_id)-1):
+        map.DrawLines(path_id[i], path_id[i+1])
+
+    return cost, 0
+
 
 map = None
 path_id = None
@@ -99,7 +114,7 @@ while x != 7:
         if map is not None:
             w1 = input("input W1:")
             w2 = input("input W2:")
-            avgCost, avgNode = showSingle(w1,w2, 1, read)
+            avgCost, avgNode = showSingle(w1,w2, read)
             print 'cost:', avgCost
             end = time.clock()
             print 'Running time is:', end-start
