@@ -112,8 +112,8 @@ while x != 7:
     elif x == 6:
         w1 = input("input W1:")
         w2 = input("input W2:")
-        numMap = 1
-        numSG = 1
+        numMap = 3
+        numSG = 5
         pathLengthSeq = 0
         nodeExpandSeq = 0
         pathLengthInt = 0
