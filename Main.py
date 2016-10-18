@@ -6,6 +6,7 @@ import time
 def show(wa, numSG, read = False):
     # start = time.clock()
     totalCost = 0
+    totalNode = 0
     for j in range(0,numSG):
         startLoc = None
         goalLoc = None
@@ -19,14 +20,17 @@ def show(wa, numSG, read = False):
         print "Start point is", mapData[startLoc.y][startLoc.x], startLoc.x, startLoc.y
         print "Goal point is", mapData[goalLoc.y][goalLoc.x], goalLoc.x, goalLoc.y
 
-        path_id, cost = intAstar(startLoc, goalLoc, mapData, wa)
+        path_id, cost, numNodes = seqAstar(startLoc, goalLoc, mapData, wa)
+        # path_id, cost, numNodes = intAstar(startLoc, goalLoc, mapData, wa)
+
         totalCost += cost
+        totalNode += numNodes
         path_id.append(startLoc)
         path_id.reverse()
 
         for i in range(0, len(path_id)-1):
             map.DrawLines(path_id[i], path_id[i+1])
-    return totalCost/numSG
+    return totalCost/numSG, totalNode/numSG
     # end = time.clock()
     # print 'Running time is:', end-start
     #
@@ -77,16 +81,19 @@ while x != 7:
         numMap = 5
         numSG = 10
         pathLength = 0
+        nodeExpand = 0
         start = time.clock()
         for i in range(0,numMap):
             print "map",i+1
             map = Map.Map()
             mapData = map.createMap()
-            avgCost = show(wa, numSG)
+            avgCost, avgNode = show(wa, numSG)
             pathLength += avgCost
+            nodeExpand += avgNode
         end = time.clock()
         print 'Running time is:', (end-start)/(numMap*numSG)
         print 'Path length is:', pathLength/numMap
+        print 'Number of nodes expanded is:', nodeExpand/numMap
         break
     elif x == 7:
         break
