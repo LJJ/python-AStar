@@ -11,6 +11,7 @@ mapData = None
 parentArray = []
 fValueArray = []
 gValueArray = []
+exist = {}
 result_i = 0
 heuristicArray = [HeuristicOptimal,HeuristicOne,HeuristicTwo,HeuristicThree,HeuristicFour]
 
@@ -27,6 +28,8 @@ def resetAllData(amount):
     hValueArray = [{} for i in range(amount)]
     global fValueArray
     fValueArray = [{} for i in range(amount)]
+    global exist
+    exist = {}
 
 def Astar(sStart, sGoal, mapD, wa):
     # A-star algorithm
@@ -112,7 +115,7 @@ def expand(s, goal, i):
                         if closed.has_key(s_prime.key()) is False:
                             temp_gValue = gValue[s.key()] + distance(s, s_prime)
                             if fringe.has(s_prime) is False:
-                                s_prime.fValue = float('inf')
+                                gValue[s_prime.key()] = float('inf') #warning
                                 status = True
                             else:
                                 # s_prime = fringe.getLoc(s_prime.key())  #don't remove
@@ -123,11 +126,6 @@ def expand(s, goal, i):
                             if status == True:
                                 parent[s_prime.key()] = s
                                 gValue[s_prime.key()] = temp_gValue
-                                # if i == 0:
-                                #     if fringeArray[i].minValue() > previousMinValue:
-                                #         fringe.insert(s_prime, fValue[s_prime.key()])
-                                #         previousMinValue = fringeArray[i].minValue()
-                                # else:
                                 fringe.insert(s_prime, gValue[s_prime.key()]+w1*heuristicArray[i].hValue(s_prime,goal))
 
 def intAstar(sStart, sGoal, mapD, wa):
@@ -138,6 +136,7 @@ def intAstar(sStart, sGoal, mapD, wa):
     w2 = 1.0
     gValueArray[0][sStart.key()] = 0.0
     gValueArray[0][sGoal.key()] = float('inf')
+    exist[sStart.key()] = True
     for i in range(0,len(heuristicArray)):
         fringeArray[i].insert(sStart,w1*heuristicArray[i].hValue(sStart,sGoal))
 
@@ -178,22 +177,19 @@ def expandInt(s, goal):
                         continue
                     if mapData[s.y+n][s.x+m] is not "0":
                         s_prime = Node.Location(s.x+m, s.y+n)
+                        if exist.has_key(s_prime.key()) is False:
+                            exist[s_prime.key()] = True
+                            gValue[s_prime.key()] = float('inf')
                         temp_gValue = gValue[s.key()] + distance(s, s_prime)
-                        status = False
-                        if closedArray[0].has_key(s_prime.key()) is False:
-                            if fringeArray[0].has(s_prime) is False:
-                                gValue[s_prime.key()] = float('inf')
-                                status = True
-                            elif temp_gValue < gValue[s_prime.key()]:
-                                status = True
-                            if status is True:
-                                parent[s_prime.key()] = s
-                                gValue[s_prime.key()] = temp_gValue
-                                fringeArray[0].insert(s_prime, gValue[s_prime.key()]+w1*HeuristicOptimal.hValue(s_prime,goal))
-                                if closedArray[1].has_key(s_prime.key()) is False:
-                                    for i in range(1, len(heuristicArray)):
-                                        gValue[s_prime.key()] = temp_gValue
-                                        fringeArray[i].insert(s_prime, gValue[s_prime.key()]+w1*HeuristicOptimal.hValue(s_prime,goal))
+                        if temp_gValue < gValue[s_prime.key()]:
+                            gValue[s_prime.key()] = temp_gValue
+                            parent[s_prime.key()] = s
+
+                            if closedArray[0].has_key(s_prime.key()) is False :
+                                fringeArray[0].insert(s_prime, gValue[s_prime.key()]+w1*heuristicArray[i].hValue(s_prime,goal))
+                                for i in range(1, len(heuristicArray)):
+                                    if closedArray[i].has_key(s_prime.key()) is False:
+                                        fringeArray[i].insert(s_prime, gValue[s_prime.key()]+w1*heuristicArray[i].hValue(s_prime,goal))
 
 
 def findPath(current, i):
