@@ -7,6 +7,7 @@ def show(w1, w2, numSG, read = False):
     # start = time.clock()
     totalCost = 0
     totalNode = 0
+    memory = 0.0
     for j in range(0,numSG):
         startLoc = None
         goalLoc = None
@@ -20,13 +21,12 @@ def show(w1, w2, numSG, read = False):
         print "Start point is", mapData[startLoc.y][startLoc.x], startLoc.x, startLoc.y
         print "Goal point is", mapData[goalLoc.y][goalLoc.x], goalLoc.x, goalLoc.y
 
-        # map.algorithm = AstarSeq(mapData, wa)
+        # map.algorithm = Astar(mapData, w1,w2)
+        # map.algorithm = AstarSeq(mapData, w1,w2)
         map.algorithm = AstarInt(mapData, w1, w2)
         path_id, cost, numNodes = map.algorithm.execute(startLoc, goalLoc)
+        memory += map.algorithm.maxMemory
 
-
-        # path_id, cost, numNodes = intAstar(startLoc, goalLoc, mapData, wa)
-        print "Memory cost %.2f" % (map.algorithm.maxMemory)
         totalCost += cost
         totalNode += numNodes
         path_id.append(startLoc)
@@ -34,6 +34,7 @@ def show(w1, w2, numSG, read = False):
 
         for i in range(0, len(path_id)-1):
             map.DrawLines(path_id[i], path_id[i+1])
+    print "Memory %.2f" % (memory/numSG)
     return totalCost/numSG, totalNode/numSG
     # end = time.clock()
     # print 'Running time is:', end-start
@@ -71,8 +72,8 @@ while x != 7:
         if map is not None:
             w1 = input("input W1:")
             w2 = input("input W2:")
-            show(w1,w2, 1, read)
-
+            avgCost, avgNode = show(w1,w2, 1, read)
+            print 'cost:', avgCost
             end = time.clock()
             print 'Running time is:', end-start
             Map.mainloop()

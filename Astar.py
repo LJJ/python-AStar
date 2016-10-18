@@ -50,8 +50,7 @@ class Astar():
             s = fringe.pop()
             if s == sGoal:
                 print "path found"
-                cost = 0.0#s.fValue
-                print "cost: %f" % (cost)
+                cost = self.fringeArray[0].getFvalue(sGoal)
                 path_id = self.findPath(s,0)
                 break
             closed[s.key()] = s
