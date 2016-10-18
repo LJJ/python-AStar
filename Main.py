@@ -3,7 +3,7 @@ import Map
 from Astar import *
 import time
 
-def show(wa, numSG, read = False):
+def show(w1, w2, numSG, read = False):
     # start = time.clock()
     totalCost = 0
     totalNode = 0
@@ -20,11 +20,13 @@ def show(wa, numSG, read = False):
         print "Start point is", mapData[startLoc.y][startLoc.x], startLoc.x, startLoc.y
         print "Goal point is", mapData[goalLoc.y][goalLoc.x], goalLoc.x, goalLoc.y
 
-        map.algorithm = AstarSeq(mapData, wa)
+        # map.algorithm = AstarSeq(mapData, wa)
+        map.algorithm = AstarInt(mapData, w1, w2)
         path_id, cost, numNodes = map.algorithm.execute(startLoc, goalLoc)
 
-        # path_id, cost, numNodes = intAstar(startLoc, goalLoc, mapData, wa)
 
+        # path_id, cost, numNodes = intAstar(startLoc, goalLoc, mapData, wa)
+        print "Memory cost %.2f" % (map.algorithm.maxMemory)
         totalCost += cost
         totalNode += numNodes
         path_id.append(startLoc)
@@ -67,8 +69,9 @@ while x != 7:
     elif x == 3:
         start = time.clock()
         if map is not None:
-            wa = input("input WA:")
-            show(wa, 1, read)
+            w1 = input("input W1:")
+            w2 = input("input W2:")
+            show(w1,w2, 1, read)
 
             end = time.clock()
             print 'Running time is:', end-start
@@ -79,7 +82,8 @@ while x != 7:
     elif x == 5:
         map.saveMap()
     elif x == 6:
-        wa = input("input WA:")
+        w1 = input("input W1:")
+        w2 = input("input W2:")
         numMap = 5
         numSG = 10
         pathLength = 0
@@ -89,7 +93,7 @@ while x != 7:
             print "map",i+1
             map = Map.Map()
             mapData = map.createMap()
-            avgCost, avgNode = show(wa, numSG)
+            avgCost, avgNode = show(w1, w2, numSG)
             pathLength += avgCost
             nodeExpand += avgNode
         end = time.clock()
