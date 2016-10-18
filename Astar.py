@@ -4,263 +4,257 @@ import BinaryHeap
 import Node
 from Heuristic import *
 
-
-fringeArray = []#BinaryHeap.BinaryHeap()
-closedArray = []
-mapData = None
-parentArray = []
-gValueArray = []
-exist = {}
-result_i = 0
 heuristicArray = [HeuristicOptimal,HeuristicOne,HeuristicTwo,HeuristicThree,HeuristicFour]
-w1 = 1.0
-w2 = 1.0
 
-def resetAllData(amount):
-    global fringeArray
-    fringeArray = [BinaryHeap.BinaryHeap() for i in range(amount)]
-    global closedArray
-    closedArray = [{} for i in range(amount)]
-    global parentArray
-    parentArray = [{} for i in range(amount)]
-    global gValueArray
-    gValueArray = [{} for i in range(amount)]
-    global hValueArray
-    hValueArray = [{} for i in range(amount)]
-    global exist
+class Astar():
+
+    fringeArray = []
+    closedArray = []
+    mapData = None
+    parentArray = []
+    gValueArray = []
     exist = {}
 
-def Astar(sStart, sGoal, mapD, wa):
-    # A-star algorithm
-    resetAllData(1)
-    global mapData
-    mapData = mapD
 
-    cost = 0.0
-    gValue = gValueArray[0]
-    parent = parentArray[0]
-    fringe = fringeArray[0]
-    closed = closedArray[0]
+    def __init__(self, mapData, w1 = 1.0, w2 = 1.0):
+        amount = len(heuristicArray)
+        self.fringeArray = [BinaryHeap.BinaryHeap() for i in range(amount)]
+        self.closedArray = [{} for i in range(amount)]
+        self.parentArray = [{} for i in range(amount)]
+        self.gValueArray = [{} for i in range(amount)]
+        self.exist = {}
+        self.mapData = mapData
+        self.result_i = 0
+        self.w1 = w1
+        self.w2 = w2
 
-    w=wa
-    gValue[sStart.key()] = 0.0
-    fringe.insert(sStart, HeuristicOptimal.hValue(sStart, sGoal))
-    path_id = []
 
-    while fringe.count() > 0:
-        s = fringe.pop()
-        if s == sGoal:
-            print "path found"
-            cost = s.fValue
-            print "cost: %f" % (cost)
-            loc1 = findPath(s,0)
-            break
+
+    def execute(self, sStart, sGoal):
+        # A-star algorithm
+        cost = 0.0
+        gValue = self.gValueArray[0]
+        parent = self.parentArray[0]
+        fringe = self.fringeArray[0]
+        closed = self.closedArray[0]
+
+        gValue[sStart.key()] = 0.0
+        fringe.insert(sStart, HeuristicOptimal.hValue(sStart, sGoal))
+        path_id = []
+
+        while fringe.count() > 0:
+            s = fringe.pop()
+            if s == sGoal:
+                print "path found"
+                cost = 0.0#s.fValue
+                print "cost: %f" % (cost)
+                path_id = self.findPath(s,0)
+                break
+            closed[s.key()] = s
+            self.expand(s,sGoal,0)
+        return path_id, cost, 0
+
+    def expand(self, s, goal, i):
+        gValue = self.gValueArray[i]
+        parent = self.parentArray[i]
+        fringe = self.fringeArray[i]
+        closed = self.closedArray[i]
+        previousMinValue = 0
         closed[s.key()] = s
-        expand(s,sGoal,0)
-    return path_id, cost
-
-
-def seqAstar(sStart, sGoal, mapD, wa):
-    # A-star algorithm
-    resetAllData(len(heuristicArray))
-    global mapData
-    mapData = mapD
-    numNodes = 0
-    for i in range(0,len(heuristicArray)):
-        gValueArray[i][sStart.key()] = 0.0
-        gValueArray[i][sGoal.key()] = float('inf')
-        fringeArray[i].insert(sStart,w1*heuristicArray[i].hValue(sStart,sGoal))
-
-    while fringeArray[0].minValue() < float('inf'):
-        numNodes += 1
-        for i in range(1, len(heuristicArray)):
-            if fringeArray[i].minValue() <= w2*fringeArray[0].minValue():
-                if gValueArray[i][sGoal.key()] < fringeArray[i].minValue():
-                    if gValueArray[i][sGoal.key()] < float('inf'):
-                        path_id = findPath(sGoal, i)
-                        global result_i
-                        result_i = i
-                        return path_id, fringeArray[i].getFvalue(sGoal), numNodes
-                else:
-                    s = fringeArray[i].pop()
-                    expand(s,sGoal,i)
-            else:
-                if gValueArray[0][sGoal.key()] <= fringeArray[0].minValue():
-                    if gValueArray[0][sGoal.key()] < float('inf'):
-                        path_id =findPath(sGoal, 0)
-                        global result_i
-                        result_i = 0
-                        return path_id, fringeArray[0].getFvalue(sGoal), numNodes
-                else:
-                    s = fringeArray[0].pop()
-                    expand(s,sGoal,0)
-    return [], fringeArray[0].getFvalue(sGoal), num_of_nodes
-
-def expand(s, goal, i):
-    gValue = gValueArray[i]
-    parent = parentArray[i]
-    fringe = fringeArray[i]
-    closed = closedArray[i]
-    previousMinValue = 0
-    closed[s.key()] = s
-    for m in range(-1,2):
-            for n in range(-1,2):
-                if not(m == 0 and n == 0):
-                    if s.y+n > 119 or s.x+m > 159 or s.y+n < 0 or s.x+m < 0:
-                        continue
-                    if mapData[s.y+n][s.x+m] is not "0":
-                        s_prime = Node.Location(s.x+m, s.y+n)
-                        if closed.has_key(s_prime.key()) is False:
-                            temp_gValue = gValue[s.key()] + distance(s, s_prime)
-                            if fringe.has(s_prime) is False:
-                                gValue[s_prime.key()] = float('inf') #warning
-                                status = True
-                            else:
-                                if temp_gValue < gValue[s_prime.key()]:
+        for m in range(-1,2):
+                for n in range(-1,2):
+                    if not(m == 0 and n == 0):
+                        if s.y+n > 119 or s.x+m > 159 or s.y+n < 0 or s.x+m < 0:
+                            continue
+                        if self.mapData[s.y+n][s.x+m] is not "0":
+                            s_prime = Node.Location(s.x+m, s.y+n)
+                            if closed.has_key(s_prime.key()) is False:
+                                temp_gValue = gValue[s.key()] + self.distance(s, s_prime)
+                                if fringe.has(s_prime) is False:
+                                    gValue[s_prime.key()] = float('inf') #warning
                                     status = True
                                 else:
-                                    status = False
-                            if status == True:
-                                parent[s_prime.key()] = s
+                                    if temp_gValue < gValue[s_prime.key()]:
+                                        status = True
+                                    else:
+                                        status = False
+                                if status == True:
+                                    parent[s_prime.key()] = s
+                                    gValue[s_prime.key()] = temp_gValue
+                                    fValue_i =  gValue[s_prime.key()]+self.w1*heuristicArray[i].hValue(s_prime,goal)
+                                    fringe.insert(s_prime, fValue_i)
+
+    def findPath(self, current, i):
+        path_id = []
+        parent = self.parentArray[i]
+        path_id.append(current)
+        while parent.has_key(current.key()):
+            path_id.append(parent[current.key()])
+            current = parent[current.key()]
+        return path_id
+
+    def output(self, target):
+        fringe = self.fringeArray[self.result_i]
+        closed = self.closedArray[self.result_i]
+        if fringe.has(target) is True:
+            print(fringe.getLoc(target.key()))
+        elif closed.has_key(target.key()):
+            print(closed[target.key()])
+
+    def distance(self, s, s_prime):
+        # print mapData[s.y][s.x], mapData[s_prime.y][s_prime.x]
+        distConst= sqrt((s.x- s_prime.x)**2+(s.y- s_prime.y)**2)
+        mapData = self.mapData
+        if mapData[s.y][s.x] == '1':
+            if mapData[s_prime.y][s_prime.x] == '1':
+                dist =distConst
+            elif mapData[s_prime.y][s_prime.x] == '2':
+                dist =1.5* distConst
+            elif 'a' in mapData[s_prime.y][s_prime.x]:
+                dist =distConst
+            elif 'b' in mapData[s_prime.y][s_prime.x]:
+                dist =1.5* distConst
+        elif mapData[s.y][s.x] == '2':
+            if mapData[s_prime.y][s_prime.x] == '1':
+                dist =1.5* distConst
+            elif mapData[s_prime.y][s_prime.x] == '2':
+                dist =2* distConst
+            elif 'a' in mapData[s_prime.y][s_prime.x]:
+                dist =1.5* distConst
+            elif 'b' in mapData[s_prime.y][s_prime.x]:
+                dist =2* distConst
+        elif 'a' in mapData[s.y][s.x]:
+            if mapData[s_prime.y][s_prime.x] == '1':
+                dist =distConst
+            elif mapData[s_prime.y][s_prime.x] == '2':
+                dist =1.5* distConst
+            elif 'a' in mapData[s_prime.y][s_prime.x]:
+                if distConst >1:
+                    dist= distConst
+                else:
+                    dist =0.25* distConst
+            elif 'b' in mapData[s_prime.y][s_prime.x]:
+                if distConst >1:
+                    dist= 1.5* distConst
+                else:
+                    dist =0.375* distConst
+        elif 'b' in mapData[s.y][s.x]:
+            if mapData[s_prime.y][s_prime.x] == '1':
+                dist =1.5* distConst
+            elif mapData[s_prime.y][s_prime.x] == '2':
+                dist =2* distConst
+            elif 'a' in mapData[s_prime.y][s_prime.x]:
+                if distConst > 1:
+                    dist= 1.5* distConst
+                else:
+                    dist =0.375* distConst
+            elif 'b' in mapData[s_prime.y][s_prime.x]:
+                if distConst >1:
+                    dist= 2* distConst
+                else:
+                    dist =0.5* distConst
+        #dist =sqrt((s.x- s_prime.x)**2+(s.y- s_prime.y)**2)
+        return dist
+
+class AstarSeq(Astar):
+
+    def execute(self, sStart, sGoal):
+        # A-star algorithm
+        numNodes = 0
+        for i in range(0,len(heuristicArray)):
+            self.gValueArray[i][sStart.key()] = 0.0
+            self.gValueArray[i][sGoal.key()] = float('inf')
+            self.fringeArray[i].insert(sStart,self.w1*heuristicArray[i].hValue(sStart,sGoal))
+
+        while self.fringeArray[0].minValue() < float('inf'):
+            numNodes += 1
+            for i in range(1, len(heuristicArray)):
+                if self.fringeArray[i].minValue() <= self.w2*self.fringeArray[0].minValue():
+                    if self.gValueArray[i][sGoal.key()] < self.fringeArray[i].minValue():
+                        if self.gValueArray[i][sGoal.key()] < float('inf'):
+                            path_id = self.findPath(sGoal, i)
+                            self.result_i = i
+                            return path_id, self.fringeArray[i].getFvalue(sGoal), numNodes
+                    else:
+                        s = self.fringeArray[i].pop()
+                        self.expand(s,sGoal,i)
+                else:
+                    if self.gValueArray[0][sGoal.key()] <= self.fringeArray[0].minValue():
+                        if self.gValueArray[0][sGoal.key()] < float('inf'):
+                            path_id =self.findPath(sGoal, 0)
+                            self.result_i = 0
+                            return path_id, self.fringeArray[0].getFvalue(sGoal), numNodes
+                    else:
+                        s = self.fringeArray[0].pop()
+                        self.expand(s,sGoal,0)
+        return [], self.fringeArray[0].getFvalue(sGoal), numNodes
+
+
+
+class AstarInt(Astar):
+
+
+    def execute(self, sStart, sGoal):
+        self.gValueArray[0][sStart.key()] = 0.0
+        self.gValueArray[0][sGoal.key()] = float('inf')
+        self.exist[sStart.key()] = True
+        numNodes = 0
+        for i in range(0,len(heuristicArray)):
+            self.fringeArray[i].insert(sStart,self.w1*heuristicArray[i].hValue(sStart,sGoal))
+
+        while self.fringeArray[0].minValue() < float('inf'):
+            numNodes += 1
+            for i in range(1, len(heuristicArray)):
+                if self.fringeArray[i].minValue() <= self.w2*self.fringeArray[0].minValue():
+                    if self.gValueArray[0][sGoal.key()] <= self.fringeArray[i].minValue():
+                        if self.gValueArray[0][sGoal.key()] < float('inf'):
+                            path_id = self.findPath(sGoal, 0)
+                            return path_id, self.fringeArray[0].getFvalue(sGoal), numNodes
+                    else:
+                        s = self.fringeArray[i].pop()
+                        if s is not  None:
+                            self.expand(s,sGoal)
+                            self.closedArray[1][s.key()] = s
+                else:
+                    if self.gValueArray[0][sGoal.key()] <= self.fringeArray[0].minValue():
+                        if self.gValueArray[0][sGoal.key()] < float('inf'):
+                            path_id =self.findPath(sGoal, 0)
+                            return path_id, self.fringeArray[0].getFvalue(sGoal), numNodes
+                    else:
+                        s = self.fringeArray[0].pop()
+                        if s is not  None:
+                            self.expand(s,sGoal)
+                            self.closedArray[0][s.key()] = s
+        return [], self.fringeArray[0].getFvalue(sGoal), numNodes
+
+    def expand(self, s, goal):
+        gValue = self.gValueArray[0]
+        for i in range(len(self.fringeArray)):
+            self.fringeArray[i].remove(s)
+
+        parent = self.parentArray[0]
+        # closed = closedArray[i]
+        for m in range(-1,2):
+                for n in range(-1,2):
+                    if not(m == 0 and n == 0):
+                        if s.y+n > 119 or s.x+m > 159 or s.y+n < 0 or s.x+m < 0:
+                            continue
+                        if self.mapData[s.y+n][s.x+m] is not "0":
+                            s_prime = Node.Location(s.x+m, s.y+n)
+                            if self.exist.has_key(s_prime.key()) is False:
+                                self.exist[s_prime.key()] = True
+                                gValue[s_prime.key()] = float('inf')
+                            temp_gValue = gValue[s.key()] + self.distance(s, s_prime)
+                            if temp_gValue < gValue[s_prime.key()]:
                                 gValue[s_prime.key()] = temp_gValue
-                                fValue_i =  gValue[s_prime.key()]+w1*heuristicArray[i].hValue(s_prime,goal)
-                                fringe.insert(s_prime, fValue_i)
+                                parent[s_prime.key()] = s
 
-def intAstar(sStart, sGoal, mapD, wa):
-    resetAllData(len(heuristicArray))
-    global mapData
-    mapData = mapD
-    gValueArray[0][sStart.key()] = 0.0
-    gValueArray[0][sGoal.key()] = float('inf')
-    exist[sStart.key()] = True
-    numNodes = 0
-    for i in range(0,len(heuristicArray)):
-        fringeArray[i].insert(sStart,w1*heuristicArray[i].hValue(sStart,sGoal))
+                                if self.closedArray[0].has_key(s_prime.key()) is False :
+                                    fValue_zero =  gValue[s_prime.key()]+self.w1*heuristicArray[0].hValue(s_prime,goal)
+                                    self.fringeArray[0].insert(s_prime, fValue_zero)
+                                    if self.closedArray[1].has_key(s_prime.key()) is False:
+                                        for i in range(1, len(heuristicArray)):
+                                            fValue_i = gValue[s_prime.key()] + self.w1*heuristicArray[i].hValue(s_prime,goal)
+                                            if fValue_i <= self.w2*fValue_zero:
+                                                self.fringeArray[i].insert(s_prime, fValue_i)
 
-    while fringeArray[0].minValue() < float('inf'):
-        numNodes += 1
-        for i in range(1, len(heuristicArray)):
-            if fringeArray[i].minValue() <= w2*fringeArray[0].minValue():
-                if gValueArray[0][sGoal.key()] <= fringeArray[i].minValue():
-                    if gValueArray[0][sGoal.key()] < float('inf'):
-                        path_id = findPath(sGoal, 0)
-                        return path_id, fringeArray[0].getFvalue(sGoal), numNodes
-                else:
-                    s = fringeArray[i].pop()
-                    if s is not  None:
-                        expandInt(s,sGoal)
-                        closedArray[1][s.key()] = s
-            else:
-                if gValueArray[0][sGoal.key()] <= fringeArray[0].minValue():
-                    if gValueArray[0][sGoal.key()] < float('inf'):
-                        path_id =findPath(sGoal, 0)
-                        return path_id, fringeArray[0].getFvalue(sGoal), numNodes
-                else:
-                    s = fringeArray[0].pop()
-                    if s is not  None:
-                        expandInt(s,sGoal)
-                        closedArray[0][s.key()] = s
-    return [], fringeArray[0].getFvalue(sGoal), numNodes
-
-def expandInt(s, goal):
-    gValue = gValueArray[0]
-    for i in range(len(fringeArray)):
-        fringeArray[i].remove(s)
-
-    parent = parentArray[0]
-    # closed = closedArray[i]
-    for m in range(-1,2):
-            for n in range(-1,2):
-                if not(m == 0 and n == 0):
-                    if s.y+n > 119 or s.x+m > 159 or s.y+n < 0 or s.x+m < 0:
-                        continue
-                    if mapData[s.y+n][s.x+m] is not "0":
-                        s_prime = Node.Location(s.x+m, s.y+n)
-                        if exist.has_key(s_prime.key()) is False:
-                            exist[s_prime.key()] = True
-                            gValue[s_prime.key()] = float('inf')
-                        temp_gValue = gValue[s.key()] + distance(s, s_prime)
-                        if temp_gValue < gValue[s_prime.key()]:
-                            gValue[s_prime.key()] = temp_gValue
-                            parent[s_prime.key()] = s
-
-                            if closedArray[0].has_key(s_prime.key()) is False :
-                                fValue_zero =  gValue[s_prime.key()]+w1*heuristicArray[0].hValue(s_prime,goal)
-                                fringeArray[0].insert(s_prime, fValue_zero)
-                                if closedArray[1].has_key(s_prime.key()) is False:
-                                    for i in range(1, len(heuristicArray)):
-                                        fValue_i = gValue[s_prime.key()] + w1*heuristicArray[i].hValue(s_prime,goal)
-                                        if fValue_i <= w2*fValue_zero:
-                                            fringeArray[i].insert(s_prime, fValue_i)
-
-
-def findPath(current, i):
-    path_id = []
-    parent = parentArray[i]
-    path_id.append(current)
-    while parent.has_key(current.key()):
-        path_id.append(parent[current.key()])
-        current = parent[current.key()]
-    return path_id
-
-def output(target):
-    fringe = fringeArray[result_i]
-    closed = closedArray[result_i]
-    if fringe.has(target) is True:
-        print(fringe.getLoc(target.key()))
-    elif closed.has_key(target.key()):
-        print(closed[target.key()])
-
-def distance(s, s_prime):
-    # print mapData[s.y][s.x], mapData[s_prime.y][s_prime.x]
-    distConst= sqrt((s.x- s_prime.x)**2+(s.y- s_prime.y)**2)
-    if mapData[s.y][s.x] == '1':
-        if mapData[s_prime.y][s_prime.x] == '1':
-            dist =distConst
-        elif mapData[s_prime.y][s_prime.x] == '2':
-            dist =1.5* distConst
-        elif 'a' in mapData[s_prime.y][s_prime.x]:
-            dist =distConst
-        elif 'b' in mapData[s_prime.y][s_prime.x]:
-            dist =1.5* distConst
-    elif mapData[s.y][s.x] == '2':
-        if mapData[s_prime.y][s_prime.x] == '1':
-            dist =1.5* distConst
-        elif mapData[s_prime.y][s_prime.x] == '2':
-            dist =2* distConst
-        elif 'a' in mapData[s_prime.y][s_prime.x]:
-            dist =1.5* distConst
-        elif 'b' in mapData[s_prime.y][s_prime.x]:
-            dist =2* distConst
-    elif 'a' in mapData[s.y][s.x]:
-        if mapData[s_prime.y][s_prime.x] == '1':
-            dist =distConst
-        elif mapData[s_prime.y][s_prime.x] == '2':
-            dist =1.5* distConst
-        elif 'a' in mapData[s_prime.y][s_prime.x]:
-            if distConst >1:
-                dist= distConst
-            else:
-                dist =0.25* distConst
-        elif 'b' in mapData[s_prime.y][s_prime.x]:
-            if distConst >1:
-                dist= 1.5* distConst
-            else:
-                dist =0.375* distConst
-    elif 'b' in mapData[s.y][s.x]:
-        if mapData[s_prime.y][s_prime.x] == '1':
-            dist =1.5* distConst
-        elif mapData[s_prime.y][s_prime.x] == '2':
-            dist =2* distConst
-        elif 'a' in mapData[s_prime.y][s_prime.x]:
-            if distConst > 1:
-                dist= 1.5* distConst
-            else:
-                dist =0.375* distConst
-        elif 'b' in mapData[s_prime.y][s_prime.x]:
-            if distConst >1:
-                dist= 2* distConst
-            else:
-                dist =0.5* distConst
-    #dist =sqrt((s.x- s_prime.x)**2+(s.y- s_prime.y)**2)
-    return dist
