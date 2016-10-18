@@ -14,6 +14,9 @@ def show(w1, w2, numSG, read = False):
     memorySeq = 0.0
     memoryInt = 0.0
     memoryOrig = 0.0
+    durationOrig = 0.0
+    durationSeq = 0.0
+    durationInt = 0.0
     for j in range(0,numSG):
         startLoc = None
         goalLoc = None
@@ -32,21 +35,29 @@ def show(w1, w2, numSG, read = False):
         # for i in range(len(algorithms)):
         #     map.algorithm = algorithms[i]
 
+        clock1 = time.clock()
         map.algorithm = Astar(mapData, w1, w2)
         result = map.algorithm.execute(startLoc, goalLoc)
+        durationOrig += time.clock() - clock1
         memoryOrig += map.algorithm.maxMemory
         totalCostOrig += result[1]
         totalNodeOrig += result[2]
 
 
+
+        clock1 = time.clock()
+
         map.algorithm = AstarSeq(mapData, w1, w2)
         result = map.algorithm.execute(startLoc, goalLoc)
+        durationSeq += time.clock() - clock1
         memorySeq += map.algorithm.maxMemory
         totalCostSeq += result[1]
         totalNodeSeq += result[2]
 
+        clock1 = time.clock()
         map.algorithm = AstarInt(mapData, w1, w2)
         result = map.algorithm.execute(startLoc, goalLoc)
+        durationInt += time.clock() - clock1
         memoryInt += map.algorithm.maxMemory
         totalCostInt += result[1]
         totalNodeInt += result[2]
@@ -58,7 +69,7 @@ def show(w1, w2, numSG, read = False):
         #
         # for i in range(0, len(path_id)-1):
         #     map.DrawLines(path_id[i], path_id[i+1])
-    return totalCostOrig/numSG, totalNodeOrig/numSG, memoryOrig/numSG, totalCostSeq/numSG, totalNodeSeq/numSG, memorySeq/numSG, totalCostInt/numSG, totalNodeInt/numSG, memoryInt/numSG
+    return totalCostOrig/numSG, totalNodeOrig/numSG, memoryOrig/numSG, durationOrig/numSG, totalCostSeq/numSG, totalNodeSeq/numSG, memorySeq/numSG,durationSeq/numSG, totalCostInt/numSG, totalNodeInt/numSG, memoryInt/numSG, durationInt/numSG
     # end = time.clock()
     # print 'Running time is:', end-start
     #
@@ -127,8 +138,8 @@ while x != 7:
     elif x == 6:
         w1 = input("input W1:")
         w2 = input("input W2:")
-        numMap = 1
-        numSG = 1
+        numMap = 3
+        numSG = 5
         pathLengthSeq = 0
         nodeExpandSeq = 0
         pathLengthInt = 0
@@ -138,12 +149,15 @@ while x != 7:
         pathLengthOrig = 0.0
         nodeExpandOrig = 0
         memoryOrig = 0.0
+        durOrig = 0.0
+        durInt = 0.0
+        durSeq = 0.0
         start = time.clock()
         for i in range(0,numMap):
             print "map",i+1
             map = Map.Map()
             mapData = map.createMap()
-            avgCostOrig, avgNodeOrig, avgMemoryOrig, avgCostSeq, avgNodeSeq, avgMemorySeq, avgCostInt, avgNodeInt, avgMemoryInt = show(w1, w2, numSG)
+            avgCostOrig, avgNodeOrig, avgMemoryOrig,avgDurOrig, avgCostSeq, avgNodeSeq, avgMemorySeq,avgDurSeq, avgCostInt, avgNodeInt, avgMemoryInt,avgDurInt = show(w1, w2, numSG)
             pathLengthSeq += avgCostSeq
             nodeExpandSeq += avgNodeSeq
             pathLengthInt += avgCostInt
@@ -153,21 +167,26 @@ while x != 7:
             nodeExpandOrig += avgNodeOrig
             pathLengthOrig += avgCostOrig
             memoryOrig += avgMemoryOrig
+            durOrig += avgDurOrig
+            durInt += avgDurInt
+            durSeq += avgDurSeq
         end = time.clock()
 
         print "Original:"
         # print 'Running time is:', (end-start)/(numMap*numSG)
         print 'Path length is:', pathLengthOrig/numMap
+        print 'Time:', durOrig/numMap
         print 'Number of nodes expanded is:', nodeExpandOrig/numMap ,"   Memory:", avgMemoryOrig/numMap
 
         print "Sequential:"
         # print 'Running time is:', (end-start)/(numMap*numSG)
         print 'Path length is:', pathLengthSeq/numMap
+        print 'Time:', durSeq/numMap
         print 'Number of nodes expanded is:', nodeExpandSeq/numMap , "   Memory:", avgMemorySeq/numMap
 
         print "Integrated:"
-        # print 'Running time is:', (end-start)/(numMap*numSG)
         print 'Path length is:', pathLengthInt/numMap
+        print 'Time:', durInt/numMap
         print 'Number of nodes expanded is:', nodeExpandInt/numMap ,"   Memory:", avgMemoryInt/numMap
         break
     elif x == 7:
