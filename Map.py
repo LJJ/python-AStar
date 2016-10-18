@@ -12,6 +12,7 @@ class MapLocation(Location):
         self.x = x
         self.y = y
 
+
     def getAllLocations(self, location):
         x1 = min(self.x, location.x)
         x2 = max(self.x, location.x)
@@ -44,6 +45,7 @@ class Map:
         self.eightLoc = []
         self.start = None
         self.goal = None
+        self.algorithm = None
 
     def prepare(self):
         master = Tk()
@@ -67,7 +69,7 @@ class Map:
 
     def callback(self, event):
         loc = MapLocation(math.floor((self.w.canvasx(event.x)-border)/unit),math.floor((self.w.canvasy(event.y)-border)/unit))
-        Astar.output(loc)
+        self.algorithm.output(loc)
         # print loc.x,loc.y
 
 
