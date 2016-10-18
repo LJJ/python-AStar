@@ -42,6 +42,8 @@ class Map:
         self.allHighways = []
         self.w = None
         self.eightLoc = []
+        self.start = None
+        self.goal = None
 
     def prepare(self):
         master = Tk()
@@ -163,8 +165,6 @@ class Map:
             for l in range(0, len(locaitons)):
                 self.removeHighwayCell(locaitons[l])
     
-    
-    
     def drawHighway(self, highway):
         self.allHighways.append(highway)
         for i in range(0,len(highway)-1):
@@ -235,7 +235,6 @@ class Map:
         return position_x, position_y
     
     def CreateStartGoal(self):
-    
         start_x, start_y = self.GenerateStartGoal()
         while self.mapData[start_y][start_x] == "0":
             start_x, start_y = self.GenerateStartGoal()
@@ -252,7 +251,9 @@ class Map:
                 goal_x, goal_y = self.GenerateStartGoal()
         self.w.create_oval(unit*start_x+border+1, unit*start_y+border+1, unit*(start_x+1)+border-1, unit*(start_y+1)+border-1, fill="red")
         self.w.create_oval(unit*goal_x+border+1, unit*goal_y+border+1, unit*(goal_x+1)+border-1, unit*(goal_y+1)+border-1, fill="green")
-        return MapLocation(start_x,start_y),MapLocation(goal_x,goal_y)
+        self.start = MapLocation(start_x,start_y)
+        self.goal =  MapLocation(goal_x,goal_y)
+        return self.start, self.goal
     
     def DrawLines(self,locstart, locend):
         self.w.create_line((locstart.x+0.5)*unit+border, (locstart.y+0.5)*unit+border, (locend.x+0.5)*unit+border,(locend.y+0.5)*unit+border, fill="red", width= 3)
@@ -267,12 +268,15 @@ class Map:
     
     def saveMap(self):
         f = open("./test.txt","w")
-        f.write("%d,%d" % (self.height,self.width))
+        f.write("%d,%d" % (self.start.x,self.start.y))
+        f.write("\n%d,%d" % (self.goal.x,self.goal.y))
 
         for i in range(0,len(self.eightLoc)):
             loc = self.eightLoc[i]
             line = "%s,%s" % (loc.x,loc.y)
             f.write("\n"+line)
+
+        f.write("\n%d,%d" % (self.height,self.width))
 
         for i in range(0,len(self.mapData)):
             line = ""
@@ -285,10 +289,12 @@ class Map:
         content = open("./test.txt").read()
         lines = content.split("\n")
         self.mapData = []
-        self.width = int(lines[0].split(",")[1])
-        self.height = int(lines[0].split(",")[0])
+        self.start = Location(int(lines[0].split(",")[0]),int(lines[0].split(",")[1]))
+        self.goal = Location(int(lines[1].split(",")[0]),int(lines[1].split(",")[1]))
+        self.width = int(lines[10].split(",")[1])
+        self.height = int(lines[10].split(",")[0])
         self.prepare()
-        for i in range(9, len(lines)):
+        for i in range(11, len(lines)):
             self.mapData.append(lines[i].split(","))
             # print(id(mapData))
     
