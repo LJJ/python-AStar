@@ -3,10 +3,12 @@ import Map
 from Astar import *
 import time
 
-def show(wa, numSG, read = False):
+def show(w1, w2, numSG, read = False):
     # start = time.clock()
-    totalCost = 0
-    totalNode = 0
+    totalCostSeq = 0
+    totalCostInt = 0
+    totalNodeSeq = 0
+    totalNodeInt = 0
     for j in range(0,numSG):
         startLoc = None
         goalLoc = None
@@ -20,19 +22,23 @@ def show(wa, numSG, read = False):
         print "Start point is", mapData[startLoc.y][startLoc.x], startLoc.x, startLoc.y
         print "Goal point is", mapData[goalLoc.y][goalLoc.x], goalLoc.x, goalLoc.y
 
-        map.algorithm = AstarSeq(mapData, wa)
-        path_id, cost, numNodes = map.algorithm.execute(startLoc, goalLoc)
+        map.algorithm = AstarSeq(mapData, w1, w2)
+        path_id, costSeq, numNodesSeq = map.algorithm.execute(startLoc, goalLoc)
+        map.algorithm = AstarInt(mapData, w1, w2)
+        path_id, costInt, numNodesInt = map.algorithm.execute(startLoc, goalLoc)
 
         # path_id, cost, numNodes = intAstar(startLoc, goalLoc, mapData, wa)
-
-        totalCost += cost
-        totalNode += numNodes
+        print "Memory cost %.2f" % (map.algorithm.maxMemory)
+        totalCostSeq += costSeq
+        totalCostInt += costInt
+        totalNodeSeq += numNodesSeq
+        totalNodeInt += numNodesInt
         path_id.append(startLoc)
         path_id.reverse()
 
         for i in range(0, len(path_id)-1):
             map.DrawLines(path_id[i], path_id[i+1])
-    return totalCost/numSG, totalNode/numSG
+    return totalCostSeq/numSG, totalNodeSeq/numSG, totalCostInt/numSG, totalNodeInt/numSG
     # end = time.clock()
     # print 'Running time is:', end-start
     #
@@ -67,8 +73,9 @@ while x != 7:
     elif x == 3:
         start = time.clock()
         if map is not None:
-            wa = input("input WA:")
-            show(wa, 1, read)
+            w1 = input("input W1:")
+            w2 = input("input W2:")
+            show(w1,w2, 1, read)
 
             end = time.clock()
             print 'Running time is:', end-start
@@ -79,24 +86,35 @@ while x != 7:
     elif x == 5:
         map.saveMap()
     elif x == 6:
-        # wa = input("input WA:")
-        wa = 1
+        w1 = input("input W1:")
+        w2 = input("input W2:")
         numMap = 5
         numSG = 10
-        pathLength = 0
-        nodeExpand = 0
+        pathLengthSeq = 0
+        nodeExpandSeq = 0
+        pathLengthInt = 0
+        nodeExpandInt = 0
         start = time.clock()
         for i in range(0,numMap):
             print "map",i+1
             map = Map.Map()
             mapData = map.createMap()
-            avgCost, avgNode = show(wa, numSG)
-            pathLength += avgCost
-            nodeExpand += avgNode
+            avgCostSeq, avgNodeSeq, avgCostInt, avgNodeInt = show(w1, w2, numSG)
+            pathLengthSeq += avgCostSeq
+            nodeExpandSeq += avgNodeSeq
+            pathLengthInt += avgCostInt
+            nodeExpandInt += avgNodeInt
         end = time.clock()
-        print 'Running time is:', (end-start)/(numMap*numSG)
-        print 'Path length is:', pathLength/numMap
-        print 'Number of nodes expanded is:', nodeExpand/numMap
+
+        print "Sequential:"
+        # print 'Running time is:', (end-start)/(numMap*numSG)
+        print 'Path length is:', pathLengthSeq/numMap
+        print 'Number of nodes expanded is:', nodeExpandSeq/numMap
+
+        print "Integrated:"
+        # print 'Running time is:', (end-start)/(numMap*numSG)
+        print 'Path length is:', pathLengthInt/numMap
+        print 'Number of nodes expanded is:', nodeExpandInt/numMap
         break
     elif x == 7:
         break

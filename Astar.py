@@ -3,6 +3,7 @@ from math import *
 import BinaryHeap
 import Node
 from Heuristic import *
+import resource
 
 heuristicArray = [HeuristicOptimal,HeuristicOne,HeuristicTwo,HeuristicThree,HeuristicFour]
 
@@ -14,6 +15,7 @@ class Astar():
     parentArray = []
     gValueArray = []
     exist = {}
+
 
 
     def __init__(self, mapData, w1 = 1.0, w2 = 1.0):
@@ -28,6 +30,7 @@ class Astar():
         self.w1 = w1
         self.w2 = w2
         self.valueDic = [{} for i in range(amount)]
+        self.maxMemory = 0
 
 
 
@@ -60,6 +63,7 @@ class Astar():
         parent = self.parentArray[i]
         fringe = self.fringeArray[i]
         closed = self.closedArray[i]
+        self.recordMemory()
         previousMinValue = 0
         closed[s.key()] = s
         for m in range(-1,2):
@@ -85,6 +89,16 @@ class Astar():
                                     fValue_i =  gValue[s_prime.key()]+self.w1*heuristicArray[i].hValue(s_prime,goal)
                                     self.saveValue( i,s_prime,temp_gValue,fValue_i)
                                     fringe.insert(s_prime, fValue_i)
+
+
+    def recordMemory(self):
+        currentM = 0
+        for i in range(len(self.fringeArray)):
+            currentM += len(self.fringeArray[i].heap)
+            currentM += len(self.closedArray[i])
+
+        if self.maxMemory < currentM:
+            self.maxMemory = currentM
 
     def saveValue(self,i, loc, gValue, fValue):
         self.valueDic[i][loc.key()] = "gValue: %.2f hValue: %.2f fValue: %.2f" % (gValue, fValue-gValue, fValue)
@@ -162,21 +176,23 @@ class AstarSeq(Astar):
 
     def execute(self, sStart, sGoal):
         # A-star algorithm
-        numNodes = 0
+        numNodesSeq = 0
         for i in range(0,len(heuristicArray)):
             self.gValueArray[i][sStart.key()] = 0.0
             self.gValueArray[i][sGoal.key()] = float('inf')
             self.fringeArray[i].insert(sStart,self.w1*heuristicArray[i].hValue(sStart,sGoal))
 
         while self.fringeArray[0].minValue() < float('inf'):
-            numNodes += 1
+            #numNodes += 1
             for i in range(1, len(heuristicArray)):
                 if self.fringeArray[i].minValue() <= self.w2*self.fringeArray[0].minValue():
                     if self.gValueArray[i][sGoal.key()] < self.fringeArray[i].minValue():
                         if self.gValueArray[i][sGoal.key()] < float('inf'):
                             path_id = self.findPath(sGoal, i)
                             self.result_i = i
-                            return path_id, self.fringeArray[i].getFvalue(sGoal), numNodes
+                            # print len(self.closedArray[self.result_i]), self.result_i
+                            numNodesSeq = len(self.closedArray[self.result_i])
+                            return path_id, self.fringeArray[i].getFvalue(sGoal), numNodesSeq
                     else:
                         s = self.fringeArray[i].pop()
                         self.expand(s,sGoal,i)
@@ -185,7 +201,9 @@ class AstarSeq(Astar):
                         if self.gValueArray[0][sGoal.key()] < float('inf'):
                             path_id =self.findPath(sGoal, 0)
                             self.result_i = 0
-                            return path_id, self.fringeArray[0].getFvalue(sGoal), numNodes
+                            # print len(self.closedArray[self.result_i]), self.result_i
+                            numNodesSeq = len(self.closedArray[self.result_i])
+                            return path_id, self.fringeArray[0].getFvalue(sGoal), numNodesSeq
                     else:
                         s = self.fringeArray[0].pop()
                         self.expand(s,sGoal,0)
@@ -200,18 +218,20 @@ class AstarInt(Astar):
         self.gValueArray[0][sStart.key()] = 0.0
         self.gValueArray[0][sGoal.key()] = float('inf')
         self.exist[sStart.key()] = True
-        numNodes = 0
+        numNodesInt = 0
         for i in range(0,len(heuristicArray)):
             self.fringeArray[i].insert(sStart,self.w1*heuristicArray[i].hValue(sStart,sGoal))
 
         while self.fringeArray[0].minValue() < float('inf'):
-            numNodes += 1
+            # numNodes += 1
             for i in range(1, len(heuristicArray)):
                 if self.fringeArray[i].minValue() <= self.w2*self.fringeArray[0].minValue():
                     if self.gValueArray[0][sGoal.key()] <= self.fringeArray[i].minValue():
                         if self.gValueArray[0][sGoal.key()] < float('inf'):
                             path_id = self.findPath(sGoal, 0)
-                            return path_id, self.fringeArray[0].getFvalue(sGoal), numNodes
+                            numNodesInt = len(self.closedArray[1]) + len(self.closedArray[0])
+                            # print len(self.closedArray[1]), self.result_i
+                            return path_id, self.fringeArray[0].getFvalue(sGoal), numNodesInt
                     else:
                         s = self.fringeArray[i].pop()
                         self.expand(s,sGoal)
@@ -222,14 +242,17 @@ class AstarInt(Astar):
                         if self.gValueArray[0][sGoal.key()] < float('inf'):
                             path_id =self.findPath(sGoal, 0)
                             self.result_i = 0
-                            return path_id, self.fringeArray[0].getFvalue(sGoal), numNodes
+                            numNodesInt = len(self.closedArray[0]) + len(self.closedArray[1])
+                            # print len(self.closedArray[0]), self.result_i
+                            return path_id, self.fringeArray[0].getFvalue(sGoal), numNodesInt
                     else:
                         s = self.fringeArray[0].pop()
                         self.expand(s,sGoal)
                         self.closedArray[0][s.key()] = s
-        return [], self.fringeArray[0].getFvalue(sGoal), numNodes
+        return [], self.fringeArray[0].getFvalue(sGoal), numNodesInt
 
     def expand(self, s, goal):
+        self.recordMemory()
         gValue = self.gValueArray[0]
         for i in range(len(self.fringeArray)):
             self.fringeArray[i].remove(s)
