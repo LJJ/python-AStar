@@ -27,6 +27,7 @@ class Astar():
         self.result_i = 0
         self.w1 = w1
         self.w2 = w2
+        self.valueDic = [{} for i in range(amount)]
 
 
 
@@ -82,7 +83,11 @@ class Astar():
                                     parent[s_prime.key()] = s
                                     gValue[s_prime.key()] = temp_gValue
                                     fValue_i =  gValue[s_prime.key()]+self.w1*heuristicArray[i].hValue(s_prime,goal)
+                                    self.saveValue( i,s_prime,temp_gValue,fValue_i)
                                     fringe.insert(s_prime, fValue_i)
+
+    def saveValue(self,i, loc, gValue, fValue):
+        self.valueDic[i][loc.key()] = "gValue: %.2f hValue: %.2f fValue: %.2f" % (gValue, fValue-gValue, fValue)
 
     def findPath(self, current, i):
         path_id = []
@@ -94,12 +99,9 @@ class Astar():
         return path_id
 
     def output(self, target):
-        fringe = self.fringeArray[self.result_i]
-        closed = self.closedArray[self.result_i]
-        if fringe.has(target) is True:
-            print(fringe.getLoc(target.key()))
-        elif closed.has_key(target.key()):
-            print(closed[target.key()])
+        print(target)
+        if self.valueDic[self.result_i].has_key(target.key()):
+            print(self.valueDic[self.result_i][target.key()])
 
     def distance(self, s, s_prime):
         # print mapData[s.y][s.x], mapData[s_prime.y][s_prime.x]
@@ -212,19 +214,19 @@ class AstarInt(Astar):
                             return path_id, self.fringeArray[0].getFvalue(sGoal), numNodes
                     else:
                         s = self.fringeArray[i].pop()
-                        if s is not  None:
-                            self.expand(s,sGoal)
-                            self.closedArray[1][s.key()] = s
+                        self.expand(s,sGoal)
+                        self.result_i = i
+                        self.closedArray[1][s.key()] = s
                 else:
                     if self.gValueArray[0][sGoal.key()] <= self.fringeArray[0].minValue():
                         if self.gValueArray[0][sGoal.key()] < float('inf'):
                             path_id =self.findPath(sGoal, 0)
+                            self.result_i = 0
                             return path_id, self.fringeArray[0].getFvalue(sGoal), numNodes
                     else:
                         s = self.fringeArray[0].pop()
-                        if s is not  None:
-                            self.expand(s,sGoal)
-                            self.closedArray[0][s.key()] = s
+                        self.expand(s,sGoal)
+                        self.closedArray[0][s.key()] = s
         return [], self.fringeArray[0].getFvalue(sGoal), numNodes
 
     def expand(self, s, goal):
@@ -252,9 +254,11 @@ class AstarInt(Astar):
                                 if self.closedArray[0].has_key(s_prime.key()) is False :
                                     fValue_zero =  gValue[s_prime.key()]+self.w1*heuristicArray[0].hValue(s_prime,goal)
                                     self.fringeArray[0].insert(s_prime, fValue_zero)
+                                    self.saveValue(0,s_prime,gValue[s_prime.key()],fValue_zero)
                                     if self.closedArray[1].has_key(s_prime.key()) is False:
                                         for i in range(1, len(heuristicArray)):
                                             fValue_i = gValue[s_prime.key()] + self.w1*heuristicArray[i].hValue(s_prime,goal)
                                             if fValue_i <= self.w2*fValue_zero:
                                                 self.fringeArray[i].insert(s_prime, fValue_i)
+                                                self.saveValue(0,s_prime,gValue[s_prime.key()],fValue_i)
 

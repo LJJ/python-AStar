@@ -11,6 +11,9 @@ class Location:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        self.gValue = 0.0
+        self.hValue = 0.0
+        self.fValue = 0.0
 
     # def __init__(self, loc):
     #     self.x = loc.x
@@ -18,7 +21,7 @@ class Location:
     #     self.fValue = loc.fValue
 
     def __str__(self):
-        return "(%s,%s)\n" % (self.x,self.y)
+        return "%s,%s" % (self.x,self.y)
 
     # def fValue(self):
     #     return self.gValue + self.hValue
