@@ -186,7 +186,7 @@ def expandInt(s, goal):
                             parent[s_prime.key()] = s
 
                             if closedArray[0].has_key(s_prime.key()) is False :
-                                fringeArray[0].insert(s_prime, gValue[s_prime.key()]+w1*heuristicArray[i].hValue(s_prime,goal))
+                                fringeArray[0].insert(s_prime, gValue[s_prime.key()]+w1*heuristicArray[0].hValue(s_prime,goal))
                                 for i in range(1, len(heuristicArray)):
                                     if closedArray[i].has_key(s_prime.key()) is False:
                                         fringeArray[i].insert(s_prime, gValue[s_prime.key()]+w1*heuristicArray[i].hValue(s_prime,goal))
