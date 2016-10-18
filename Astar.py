@@ -65,12 +65,14 @@ def seqAstar(sStart, sGoal, mapD, wa):
     mapData = mapD
     w1 = 1.0
     w2 = 1.0
+    numNodes = 0
     for i in range(0,len(heuristicArray)):
         gValueArray[i][sStart.key()] = 0.0
         gValueArray[i][sGoal.key()] = float('inf')
         fringeArray[i].insert(sStart,w1*heuristicArray[i].hValue(sStart,sGoal))
 
     while fringeArray[0].minValue() < float('inf'):
+        numNodes += 1
         for i in range(1, len(heuristicArray)):
             if fringeArray[i].minValue() <= w2*fringeArray[0].minValue():
                 if gValueArray[i][sGoal.key()] < fringeArray[i].minValue():
@@ -78,7 +80,7 @@ def seqAstar(sStart, sGoal, mapD, wa):
                         path_id = findPath(sGoal, i)
                         global result_i
                         result_i = i
-                        return path_id, fringeArray[i].getFvalue(sGoal)
+                        return path_id, fringeArray[i].getFvalue(sGoal), numNodes
                 else:
                     s = fringeArray[i].pop()
                     expand(s,sGoal,i)
@@ -88,11 +90,11 @@ def seqAstar(sStart, sGoal, mapD, wa):
                         path_id =findPath(sGoal, 0)
                         global result_i
                         result_i = 0
-                        return path_id, fringeArray[0].getFvalue(sGoal)
+                        return path_id, fringeArray[0].getFvalue(sGoal), numNodes
                 else:
                     s = fringeArray[0].pop()
                     expand(s,sGoal,0)
-    return [], fringeArray[0].getFvalue(sGoal)
+    return [], fringeArray[0].getFvalue(sGoal), num_of_nodes
 
 def expand(s, goal, i):
     w1 = 1.0
@@ -134,17 +136,19 @@ def intAstar(sStart, sGoal, mapD, wa):
     gValueArray[0][sStart.key()] = 0.0
     gValueArray[0][sGoal.key()] = float('inf')
     exist[sStart.key()] = True
+    numNodes = 0
     for i in range(0,len(heuristicArray)):
         fringeArray[i].insert(sStart,w1*heuristicArray[i].hValue(sStart,sGoal))
 
     while fringeArray[0].minValue() < float('inf'):
+        numNodes += 1
         for i in range(1, len(heuristicArray)):
             # print fringeArray[i].minValue(), w2*fringeArray[0].minValue()
             if fringeArray[i].minValue() <= w2*fringeArray[0].minValue():
                 if gValueArray[0][sGoal.key()] <= fringeArray[i].minValue():
                     if gValueArray[0][sGoal.key()] < float('inf'):
                         path_id = findPath(sGoal, 0)
-                        return path_id, fringeArray[0].getFvalue(sGoal)
+                        return path_id, fringeArray[0].getFvalue(sGoal), numNodes
                 else:
                     s = fringeArray[i].pop()
                     if s is not  None:
@@ -154,13 +158,13 @@ def intAstar(sStart, sGoal, mapD, wa):
                 if gValueArray[0][sGoal.key()] <= fringeArray[0].minValue():
                     if gValueArray[0][sGoal.key()] < float('inf'):
                         path_id =findPath(sGoal, 0)
-                        return path_id, fringeArray[0].getFvalue(sGoal)
+                        return path_id, fringeArray[0].getFvalue(sGoal), numNodes
                 else:
                     s = fringeArray[0].pop()
                     if s is not  None:
                         expandInt(s,sGoal)
                         closedArray[0][s.key()] = s
-    return [], fringeArray[0].getFvalue(sGoal)
+    return [], fringeArray[0].getFvalue(sGoal), numNodes
 
 def expandInt(s, goal):
     w1 = 1.0
