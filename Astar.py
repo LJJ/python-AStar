@@ -9,7 +9,6 @@ fringeArray = []#BinaryHeap.BinaryHeap()
 closedArray = []
 mapData = None
 parentArray = []
-fValueArray = []
 gValueArray = []
 exist = {}
 result_i = 0
@@ -26,8 +25,6 @@ def resetAllData(amount):
     gValueArray = [{} for i in range(amount)]
     global hValueArray
     hValueArray = [{} for i in range(amount)]
-    global fValueArray
-    fValueArray = [{} for i in range(amount)]
     global exist
     exist = {}
 
@@ -142,15 +139,17 @@ def intAstar(sStart, sGoal, mapD, wa):
 
     while fringeArray[0].minValue() < float('inf'):
         for i in range(1, len(heuristicArray)):
+            print fringeArray[i].minValue(), w2*fringeArray[0].minValue()
             if fringeArray[i].minValue() <= w2*fringeArray[0].minValue():
-                if gValueArray[0][sGoal.key()] < fringeArray[i].minValue():
+                if gValueArray[0][sGoal.key()] <= fringeArray[i].minValue():
                     if gValueArray[0][sGoal.key()] < float('inf'):
                         path_id = findPath(sGoal, 0)
                         return path_id, fringeArray[0].getFvalue(sGoal)
                 else:
                     s = fringeArray[i].pop()
-                    expandInt(s,sGoal)
-                    closedArray[1][s.key()] = s
+                    if s is not  None:
+                        expandInt(s,sGoal)
+                        closedArray[1][s.key()] = s
             else:
                 if gValueArray[0][sGoal.key()] <= fringeArray[0].minValue():
                     if gValueArray[0][sGoal.key()] < float('inf'):
@@ -158,12 +157,14 @@ def intAstar(sStart, sGoal, mapD, wa):
                         return path_id, fringeArray[0].getFvalue(sGoal)
                 else:
                     s = fringeArray[0].pop()
-                    expandInt(s,sGoal)
-                    closedArray[0][s.key()] = s
+                    if s is not  None:
+                        expandInt(s,sGoal)
+                        closedArray[0][s.key()] = s
     return [], fringeArray[0].getFvalue(sGoal)
 
 def expandInt(s, goal):
     w1 = 1.0
+    w2 = 1.0
     gValue = gValueArray[0]
     for i in range(len(fringeArray)):
         fringeArray[i].remove(s)
@@ -186,10 +187,13 @@ def expandInt(s, goal):
                             parent[s_prime.key()] = s
 
                             if closedArray[0].has_key(s_prime.key()) is False :
-                                fringeArray[0].insert(s_prime, gValue[s_prime.key()]+w1*heuristicArray[i].hValue(s_prime,goal))
-                                for i in range(1, len(heuristicArray)):
-                                    if closedArray[i].has_key(s_prime.key()) is False:
-                                        fringeArray[i].insert(s_prime, gValue[s_prime.key()]+w1*heuristicArray[i].hValue(s_prime,goal))
+                                fValue_zero =  gValue[s_prime.key()]+w1*heuristicArray[0].hValue(s_prime,goal)
+                                fringeArray[0].insert(s_prime, fValue_zero)
+                                if closedArray[1].has_key(s_prime.key()) is False:
+                                    for i in range(1, len(heuristicArray)):
+                                        fValue_i = gValue[s_prime.key()] + w1*heuristicArray[i].hValue(s_prime,goal)
+                                        if fValue_i <= w2*fValue_zero:
+                                            fringeArray[i].insert(s_prime, fValue_i)
 
 
 def findPath(current, i):
