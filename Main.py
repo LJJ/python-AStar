@@ -66,7 +66,8 @@ while x != 7:
     elif x == 5:
         map.saveMap()
     elif x == 6:
-        wa = input("input WA:")
+        # wa = input("input WA:")
+        wa = 1
         numMap = 5
         numSG = 10
         pathLength = 0

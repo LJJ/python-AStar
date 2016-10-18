@@ -13,8 +13,8 @@ gValueArray = []
 exist = {}
 result_i = 0
 heuristicArray = [HeuristicOptimal,HeuristicOne,HeuristicTwo,HeuristicThree,HeuristicFour]
-w1 = 1.0
-w2 = 1.0
+w1 = 1.25
+w2 = 1.25
 
 def resetAllData(amount):
     global fringeArray
