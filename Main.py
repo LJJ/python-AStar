@@ -9,7 +9,7 @@ def show(wa):
     print mapData[startLoc.y][startLoc.x], startLoc.x, startLoc.y
     print mapData[goalLoc.y][goalLoc.x], goalLoc.x, goalLoc.y
 
-    path_id, cost = intAstar(startLoc, goalLoc, mapData, wa)
+    path_id, cost = seqAstar(startLoc, goalLoc, mapData, wa)
     path_id.append(startLoc)
     path_id.reverse()
 
@@ -19,21 +19,22 @@ def show(wa):
     end = time.clock()
     print 'Running time is:', end-start
 
-    Map.mainloop()
+    #Map.mainloop()
 
 map = None
 path_id = None
 cost = 0.0
 mapData = None
 x = 0
-while x != 6:
+while x != 7:
     display = ["Please input your choice:",
                "1. Create new map",
                "2. Read map from file",
                "3. Execute A* (WA* etc)",
                "4. Save result in file",
                "5. Save map in file",
-               "6. Exit",
+               "6. Continuous Run",
+               "7. Exit",
                "Enter your choice:",
                ]
     x = input("\n".join(display))
@@ -53,6 +54,13 @@ while x != 6:
     elif x == 5:
         map.saveMap()
     elif x == 6:
+        map = Map.Map()
+        mapData = map.createMap()
+        wa = input("input WA:")
+        for i in range(0,10):
+            show(wa)
+
+    elif x == 7:
         break
     else:
         print"Wrong number!"
