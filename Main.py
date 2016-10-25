@@ -76,6 +76,10 @@ def show(w1, w2, numSG, read = False):
     # Map.mainloop()
 
 
+# def runExp():
+#     for i in range()
+
+
 def showSingle(w1, w2, read = False):
     if read is False:
         startLoc, goalLoc = map.CreateStartGoal()
@@ -83,7 +87,7 @@ def showSingle(w1, w2, read = False):
         startLoc = map.start
         goalLoc = map.goal
 
-    map.algorithm = Astar(mapData, w1, w2)
+    map.algorithm = AstarSeq(mapData, w1, w2)
     path_id, cost, nodes  = map.algorithm.execute(startLoc, goalLoc)
 
     path_id.append(startLoc)
